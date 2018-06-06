@@ -26,7 +26,7 @@ import requests
 import json
 from enum import Enum
 
-
+# API version 2.42.0
 class ApiClient:
 	apiUri = 'https://api.elasticemail.com/v2'
 	apiKey = '00000000-0000-0000-0000-0000000000000'
@@ -39,15 +39,15 @@ class ApiClient:
 			result = requests.put(ApiClient.apiUri + url, params = data)
 		elif method == 'GET':
 			attach = ''
-			params = { k: v for k, v in data.items() if v != None } 
-			result = requests.get(ApiClient.apiUri + url, params = params) 
-			print(result.url) 	
-			
+			params = { k: v for k, v in data.items() if v != None }
+			result = requests.get(ApiClient.apiUri + url, params = params)
+			print(result.url)
+
 		jsonMy = result.json()
-		
+
 		if jsonMy['success'] is False:
 			return jsonMy['error']
-			
+
 		if 'data' in jsonMy.keys():
 			return jsonMy['data']
 		else:
@@ -55,6 +55,216 @@ class ApiClient:
 
 
 class ApiTypes:
+    """
+
+    """
+    class AccessLevel(Enum):
+        """
+
+        """
+        EENone = 0
+
+        """
+        
+        """
+        ViewAccount = 1
+
+        """
+        
+        """
+        ViewContacts = 2
+
+        """
+        
+        """
+        ViewForms = 4
+
+        """
+        
+        """
+        ViewTemplates = 8
+
+        """
+        
+        """
+        ViewCampaigns = 16
+
+        """
+        
+        """
+        ViewChannels = 32
+
+        """
+        
+        """
+        ViewJourneys = 64
+
+        """
+        
+        """
+        ViewSurveys = 128
+
+        """
+        
+        """
+        ViewSettings = 256
+
+        """
+        
+        """
+        ViewBilling = 512
+
+        """
+        
+        """
+        ViewSubAccounts = 1024
+
+        """
+        
+        """
+        ViewUsers = 2048
+
+        """
+        
+        """
+        ViewFiles = 4096
+
+        """
+        
+        """
+        ViewReports = 8192
+
+        """
+        
+        """
+        ModifyAccount = 16384
+
+        """
+        
+        """
+        ModifyContacts = 32768
+
+        """
+        
+        """
+        ModifyForms = 65536
+
+        """
+        
+        """
+        ModifyTemplates = 131072
+
+        """
+        
+        """
+        ModifyCampaigns = 262144
+
+        """
+        
+        """
+        ModifyChannels = 524288
+
+        """
+        
+        """
+        ModifyJourneys = 1048576
+
+        """
+        
+        """
+        ModifySurveys = 2097152
+
+        """
+        
+        """
+        ModifyFiles = 4194304
+
+        """
+        
+        """
+        Export = 8388608
+
+        """
+        
+        """
+        SendSmtp = 16777216
+
+        """
+        
+        """
+        SendSMS = 33554432
+
+        """
+        
+        """
+        ModifySettings = 67108864
+
+        """
+        
+        """
+        ModifyBilling = 134217728
+
+        """
+        
+        """
+        ModifyProfile = 268435456
+
+        """
+        
+        """
+        ModifySubAccounts = 536870912
+
+        """
+        
+        """
+        ModifyUsers = 1073741824
+
+        """
+        
+        """
+        Security = 2147483648
+
+        """
+        
+        """
+        ModifyLanguage = 4294967296
+
+        """
+        
+        """
+        ModifySupport = 8589934592
+
+        """
+        
+        """
+        ViewSupport = 8589934592
+
+        """
+        
+        """
+        SendHttp = 17179869184
+
+
+    """
+    
+    """
+    class AccessToken:
+        """
+        Access which this Token grants
+        """
+        AccessLevel = None #ApiTypes.AccessLevel
+
+        """
+        Filename
+        """
+        Name = None #string
+
+        """
+        When was this AccessToken used last
+        """
+        LastUse = None #DateTime?
+
+
     """
     Detailed information about your account
     """
@@ -280,7 +490,7 @@ class ApiTypes:
         LitmusCredits = None #decimal
 
         """
-        Enable advanced tools on your Account.
+        Enable contact delivery and optimization tools on your Account.
         """
         EnableContactFeatures = None #bool
 
@@ -288,6 +498,11 @@ class ApiTypes:
         
         """
         NeedsSMSVerification = None #bool
+
+        """
+        
+        """
+        DisableGlobalContacts = None #bool
 
 
     """
@@ -348,6 +563,31 @@ class ApiTypes:
         Number of active referrals
         """
         ReferralCount = None #long
+
+
+    """
+    Account's ready to send e-mails Status
+    """
+    class AccountSendStatus(Enum):
+        """
+        Account doesn't have enough credits
+        """
+        NotEnoughCredits = 1
+
+        """
+        Account can send e-mails but only without the attachments
+        """
+        CanSendEmailsNoAttachments = 2
+
+        """
+        Account has exceeded his daily send limit
+        """
+        DailySendLimitExceeded = 3
+
+        """
+        Account is ready to send e-mails
+        """
+        CanSendEmails = 4
 
 
     """
@@ -457,6 +697,11 @@ class ApiTypes:
         """
         
         """
+        ConsentTrackingOnUnsubscribe = None #bool
+
+        """
+        
+        """
         PreviewMessageID = None #string
 
         """
@@ -510,7 +755,7 @@ class ApiTypes:
         EnableUITooltips = None #bool
 
         """
-        True, if you want to use Advanced Tools.  Otherwise, false
+        True, if you want to use Contact Delivery Tools.  Otherwise, false
         """
         EnableContactFeatures = None #bool
 
@@ -533,46 +778,6 @@ class ApiTypes:
         Why your clients are receiving your emails.
         """
         DeliveryReason = None #string
-
-
-    """
-    
-    """
-    class APIKeyAction(Enum):
-        """
-        Add an additional APIKey to your Account.
-        """
-        Add = 1
-
-        """
-        Change this APIKey to a new one.
-        """
-        Change = 2
-
-        """
-        Delete this APIKey
-        """
-        Delete = 3
-
-
-    """
-    Attachment data
-    """
-    class Attachment:
-        """
-        Name of your file.
-        """
-        FileName = None #string
-
-        """
-        ID number of your attachment
-        """
-        ID = None #long
-
-        """
-        Size of your attachment.
-        """
-        Size = None #int
 
 
     """
@@ -755,6 +960,16 @@ class ApiTypes:
         TimingOption = None #int
 
         """
+        Should the opens be tracked? If no value has been provided, account's default setting will be used.
+        """
+        TrackOpens = None #bool?
+
+        """
+        Should the clicks be tracked? If no value has been provided, account's default setting will be used.
+        """
+        TrackClicks = None #bool?
+
+        """
         
         """
         CampaignTemplates = None #List<ApiTypes.CampaignTemplate>
@@ -934,6 +1149,16 @@ class ApiTypes:
         """
         TemplateChannels = None #List<ApiTypes.CampaignChannel>
 
+        """
+        Should the opens be tracked? If no value has been provided, account's default setting will be used.
+        """
+        TrackOpens = None #bool?
+
+        """
+        Should the clicks be tracked? If no value has been provided, account's default setting will be used.
+        """
+        TrackClicks = None #bool?
+
 
     """
     
@@ -1035,7 +1260,7 @@ class ApiTypes:
     """
     class CampaignTriggerType(Enum):
         """
-        
+
         """
         SendNow = 1
 
@@ -1058,6 +1283,31 @@ class ApiTypes:
         
         """
         OnClick = 5
+
+
+    """
+    
+    """
+    class CertificateValidationStatus(Enum):
+        """
+
+        """
+        ErrorOccured = -2
+
+        """
+        
+        """
+        CertNotSet = 0
+
+        """
+        
+        """
+        Valid = 1
+
+        """
+        
+        """
+        NotValid = 2
 
 
     """
@@ -1141,11 +1391,31 @@ class ApiTypes:
 
 
     """
+    
+    """
+    class ConsentTracking(Enum):
+        """
+
+        """
+        Unknown = 0
+
+        """
+        
+        """
+        Allow = 1
+
+        """
+        
+        """
+        Deny = 2
+
+
+    """
     Contact
     """
     class Contact:
         """
-        
+
         """
         ContactScore = None #int
 
@@ -1168,51 +1438,6 @@ class ApiTypes:
         Last name.
         """
         LastName = None #string
-
-        """
-        Title
-        """
-        Title = None #string
-
-        """
-        Name of organization
-        """
-        OrganizationName = None #string
-
-        """
-        City.
-        """
-        City = None #string
-
-        """
-        Name of country.
-        """
-        Country = None #string
-
-        """
-        State or province.
-        """
-        State = None #string
-
-        """
-        Zip/postal code.
-        """
-        Zip = None #string
-
-        """
-        Phone number
-        """
-        Phone = None #string
-
-        """
-        Date of birth in YYYY-MM-DD format
-        """
-        BirthDate = None #DateTime?
-
-        """
-        Your gender
-        """
-        Gender = None #string
 
         """
         Name of status: Active, Engaged, Inactive, Abuse, Bounced, Unsubscribed.
@@ -1285,84 +1510,24 @@ class ApiTypes:
         CreatedFromIP = None #string
 
         """
-        Yearly revenue for the contact
+        IP address of consent to send this contact(s) your email. If not provided your current public IP address is used for consent.
         """
-        Revenue = None #decimal
+        ConsentIP = None #string
 
         """
-        Number of purchases contact has made
+        Date of consent to send this contact(s) your email. If not provided current date is used for consent.
         """
-        PurchaseCount = None #int
+        ConsentDate = None #DateTime?
 
         """
-        Mobile phone number
+        
         """
-        MobileNumber = None #string
-
-        """
-        Fax number
-        """
-        FaxNumber = None #string
-
-        """
-        Biography for Linked-In
-        """
-        LinkedInBio = None #string
-
-        """
-        Number of Linked-In connections
-        """
-        LinkedInConnections = None #int
-
-        """
-        Biography for Twitter
-        """
-        TwitterBio = None #string
-
-        """
-        User name for Twitter
-        """
-        TwitterUsername = None #string
-
-        """
-        URL for Twitter photo
-        """
-        TwitterProfilePhoto = None #string
-
-        """
-        Number of Twitter followers
-        """
-        TwitterFollowerCount = None #int
+        ConsentTracking = None #ApiTypes.ConsentTracking
 
         """
         Unsubscribed date in YYYY-MM-DD format
         """
         UnsubscribedDate = None #DateTime?
-
-        """
-        Industry contact works in
-        """
-        Industry = None #string
-
-        """
-        Number of employees
-        """
-        NumberOfEmployees = None #int
-
-        """
-        Annual revenue of contact
-        """
-        AnnualRevenue = None #decimal?
-
-        """
-        Date of first purchase in YYYY-MM-DD format
-        """
-        FirstPurchase = None #DateTime?
-
-        """
-        Date of last purchase in YYYY-MM-DD format
-        """
-        LastPurchase = None #DateTime?
 
         """
         Free form field of notes
@@ -1375,21 +1540,6 @@ class ApiTypes:
         WebsiteUrl = None #string
 
         """
-        Number of page views
-        """
-        PageViews = None #int
-
-        """
-        Number of website visits
-        """
-        Visits = None #int
-
-        """
-        Number of messages sent last month
-        """
-        LastMonthSent = None #int?
-
-        """
         Date this contact last opened an email
         """
         LastOpened = None #DateTime?
@@ -1400,9 +1550,9 @@ class ApiTypes:
         LastClicked = None #DateTime?
 
         """
-        Your gravatar hash for image
+        Custom contact field like firstname, lastname, city etc. JSON serialized text like { "city":"london" } 
         """
-        GravatarHash = None #string
+        CustomFields = None #Dictionary<string, string>
 
 
     """
@@ -1436,6 +1586,61 @@ class ApiTypes:
 
 
     """
+    
+    """
+    class ContactHistEventType(Enum):
+        """
+        Contact opened an e-mail
+        """
+        Opened = 2
+
+        """
+        Contact clicked an e-mail
+        """
+        Clicked = 3
+
+        """
+        E-mail sent to the contact bounced
+        """
+        Bounced = 10
+
+        """
+        Contact unsubscribed
+        """
+        Unsubscribed = 11
+
+        """
+        Contact complained to an e-mail
+        """
+        Complained = 12
+
+        """
+        Contact clicked an activation link
+        """
+        Activated = 20
+
+        """
+        Contact has opted to receive Transactional-only e-mails
+        """
+        TransactionalUnsubscribed = 21
+
+        """
+        Contact's status was changed manually
+        """
+        ManualStatusChange = 22
+
+        """
+        An Activation e-mail was sent
+        """
+        ActivationSent = 24
+
+        """
+        Contact was deleted
+        """
+        Deleted = 28
+
+
+    """
     History of chosen Contact
     """
     class ContactHistory:
@@ -1452,7 +1657,7 @@ class ApiTypes:
         """
         Numeric code of event occured on this Contact.
         """
-        EventTypeValue = None #int
+        EventTypeValue = None #ApiTypes.ContactHistEventType
 
         """
         Formatted date of event.
@@ -1478,6 +1683,11 @@ class ApiTypes:
         Country of the event.
         """
         Country = None #string
+
+        """
+        Information about the event
+        """
+        Data = None #string
 
 
     """
@@ -1611,6 +1821,56 @@ class ApiTypes:
 
 
     """
+    Number of Unsubscribed or Complaint Contacts, grouped by Unsubscribe Reason;
+    """
+    class ContactUnsubscribeReasonCounts:
+        """
+
+        """
+        Unknown = None #long
+
+        """
+        
+        """
+        NoLongerWant = None #long
+
+        """
+        
+        """
+        IrrelevantContent = None #long
+
+        """
+        
+        """
+        TooFrequent = None #long
+
+        """
+        
+        """
+        NeverConsented = None #long
+
+        """
+        
+        """
+        DeceptiveContent = None #long
+
+        """
+        
+        """
+        AbuseReported = None #long
+
+        """
+        
+        """
+        ThirdParty = None #long
+
+        """
+        
+        """
+        ListUnsubscribe = None #long
+
+
+    """
     Type of credits
     """
     class CreditType(Enum):
@@ -1622,7 +1882,7 @@ class ApiTypes:
         """
         Used to run a litmus test on a template.  1 credit = 1 test.
         """
-        Litmus = 17
+        Litmus = 11
 
 
     """
@@ -1739,6 +1999,26 @@ class ApiTypes:
         """
         Type = None #ApiTypes.TrackingType
 
+        """
+        0 - NotValidated, 1 - Validated successfully, 2 - Invalid, 3 - Broken (tracking was frequnetly verfied in given period and still is invalid). For statuses: 0, 1, 3 tracking will be verified in normal periods. For status 2 tracking will be verified in high frequent periods.
+        """
+        TrackingStatus = None #ApiTypes.TrackingValidationStatus
+
+        """
+        
+        """
+        CertificateStatus = None #ApiTypes.CertificateValidationStatus
+
+        """
+        
+        """
+        CertificateValidationError = None #string
+
+        """
+        
+        """
+        TrackingTypeUserRequest = None #ApiTypes.TrackingType?
+
 
     """
     Detailed information about email credits
@@ -1770,7 +2050,7 @@ class ApiTypes:
     """
     class EmailJobFailedStatus:
         """
-        
+
         """
         Address = None #string
 
@@ -1945,6 +2225,21 @@ class ApiTypes:
         StatusChangeDate = None #DateTime
 
         """
+        Date when the email was sent
+        """
+        DateSent = None #DateTime
+
+        """
+        Date when the email changed the status to 'opened'
+        """
+        DateOpened = None #DateTime?
+
+        """
+        Date when the email changed the status to 'clicked'
+        """
+        DateClicked = None #DateTime?
+
+        """
         Detailed error or bounced message.
         """
         ErrorMessage = None #string
@@ -2020,7 +2315,7 @@ class ApiTypes:
     """
     class Export:
         """
-        
+
         """
         PublicExportID = None #Guid
 
@@ -2053,6 +2348,16 @@ class ApiTypes:
         Link to download the export
         """
         Link = None #string
+
+        """
+        Log start date (for Type = Log only)
+        """
+        LogFrom = None #DateTime?
+
+        """
+        Log end date (for Type = Log only)
+        """
+        LogTo = None #DateTime?
 
 
     """
@@ -2115,7 +2420,7 @@ class ApiTypes:
     """
     class ExportTypeCounts:
         """
-        
+
         """
         Log = None #long
 
@@ -2138,6 +2443,36 @@ class ApiTypes:
         Json representation of a survey
         """
         Survey = None #long
+
+
+    """
+    
+    """
+    class File:
+        """
+        Name of your file.
+        """
+        FileName = None #string
+
+        """
+        Size of your attachment (in bytes).
+        """
+        Size = None #int?
+
+        """
+        Date of creation in YYYY-MM-DDThh:ii:ss format
+        """
+        DateAdded = None #DateTime
+
+        """
+        When will the file be deleted from the system
+        """
+        ExpirationDate = None #DateTime?
+
+        """
+        Content type of the file
+        """
+        ContentType = None #string
 
 
     """
@@ -2420,7 +2755,7 @@ class ApiTypes:
     """
     class MessageCategory(Enum):
         """
-        
+
         """
         Unknown = 0
 
@@ -2650,7 +2985,7 @@ class ApiTypes:
     """
     class QuestionType(Enum):
         """
-        
+
         """
         RadioButtons = 1
 
@@ -2710,9 +3045,24 @@ class ApiTypes:
         Channel = None #string
 
         """
-        Date in YYYY-MM-DDThh:ii:ss format
+        Creation date
         """
         Date = None #string
+
+        """
+        Date when the email was sent
+        """
+        DateSent = None #string
+
+        """
+        Date when the email changed the status to 'opened'
+        """
+        DateOpened = None #string
+
+        """
+        Date when the email changed the status to 'clicked'
+        """
+        DateClicked = None #string
 
         """
         Content of message, HTML encoded
@@ -3090,6 +3440,11 @@ class ApiTypes:
         HttpApiAndInterface = 6
 
         """
+        Use access level sending permission.
+        """
+        UseAccessLevel = 16
+
+        """
         Sending allowed via SMTP, HTTP API and the website interface.
         """
         All = 255
@@ -3295,7 +3650,7 @@ class ApiTypes:
         MaxContacts = None #int
 
         """
-        True, if you want to use Advanced Tools.  Otherwise, false
+        True, if you want to use Contact Delivery Tools.  Otherwise, false
         """
         EnableContactFeatures = None #bool
 
@@ -3365,7 +3720,7 @@ class ApiTypes:
         EnablePrivateIPRequest = None #bool
 
         """
-        True, if you want to use Advanced Tools.  Otherwise, false
+        True, if you want to use Contact Delivery Tools.  Otherwise, false
         """
         EnableContactFeatures = None #bool
 
@@ -3605,7 +3960,7 @@ class ApiTypes:
     """
     class SurveyStepType(Enum):
         """
-        
+
         """
         PageBreak = 1
 
@@ -3765,6 +4120,16 @@ class ApiTypes:
     """
     class TrackingType(Enum):
         """
+
+        """
+        EENone = -2
+
+        """
+        
+        """
+        Delete = -1
+
+        """
         
         """
         Http = 0
@@ -3773,6 +4138,41 @@ class ApiTypes:
         
         """
         ExternalHttps = 1
+
+        """
+        
+        """
+        InternalCertHttps = 2
+
+        """
+        
+        """
+        LetsEncryptCert = 3
+
+
+    """
+    Status of ValidDomain used by DomainValidationService to determine how often tracking validation should be performed.
+    """
+    class TrackingValidationStatus(Enum):
+        """
+
+        """
+        Validated = 0
+
+        """
+        
+        """
+        NotValidated = 1
+
+        """
+        
+        """
+        Invalid = 2
+
+        """
+        
+        """
+        Broken = 3
 
 
     """
@@ -3880,7 +4280,7 @@ class ApiTypes:
         LitmusCreditsCost = None #decimal
 
         """
-        Daily cost of Advanced Tools
+        Daily cost of Contact Delivery Tools
         """
         ContactCost = None #decimal
 
@@ -3894,6 +4294,59 @@ class ApiTypes:
         """
         SupportCost = None #decimal
 
+        """
+        
+        """
+        EmailCost = None #decimal
+
+
+
+""" 
+Manage your AccessTokens (ApiKeys)
+"""
+class AccessToken:
+
+    def Add(tokenName, accessLevel):
+        """
+        Add new AccessToken
+            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
+            string tokenName -
+            ApiTypes.AccessLevel accessLevel -
+        Returns string
+        """
+        return ApiClient.Request('GET', '/accesstoken/add', {
+                    'tokenName': tokenName,
+                    'accessLevel': accessLevel.value})
+
+    def Delete(tokenName):
+        """
+        Permanently delete AccessToken.
+            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
+            string tokenName -
+        """
+        return ApiClient.Request('GET', '/accesstoken/delete', {
+                    'tokenName': tokenName})
+
+    def List():
+        """
+        Get AccessToken list.
+            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
+        Returns List<ApiTypes.AccessToken>
+        """
+        return ApiClient.Request('GET', '/accesstoken/list')
+
+    def Update(tokenName, accessLevel, tokenNameNew = None):
+        """
+        Edit AccessToken.
+            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
+            string tokenName -
+            ApiTypes.AccessLevel accessLevel -
+            string tokenNameNew -  (default None)
+        """
+        return ApiClient.Request('GET', '/accesstoken/update', {
+                    'tokenName': tokenName,
+                    'accessLevel': accessLevel.value,
+                    'tokenNameNew': tokenNameNew})
 
 
 """ 
@@ -3916,7 +4369,7 @@ class Account:
             bool sendActivation - True, if you want to send activation email to this account. Otherwise, false (default False)
             string returnUrl - URL to navigate to after account creation (default None)
             ApiTypes.SendingPermission? sendingPermission - Sending permission setting for account (default None)
-            bool? enableContactFeatures - True, if you want to use Advanced Tools.  Otherwise, false (default None)
+            bool? enableContactFeatures - True, if you want to use Contact Delivery Tools.  Otherwise, false (default None)
             string poolName - Private IP required. Name of the custom IP Pool which Sub Account should use to send its emails. Leave empty for the default one or if no Private IPs have been bought (default None)
             int emailSizeLimit - Maximum size of email including attachments in MB's (default 10)
             int? dailySendLimit - Amount of emails account can send daily (default None)
@@ -3983,18 +4436,28 @@ class Account:
                     'newPassword': newPassword,
                     'confirmPassword': confirmPassword})
 
-    def DeleteSubAccount(notify = True, subAccountEmail = None, publicAccountID = None):
+    def DeleteSubAccount(notify = True, subAccountEmail = None, publicAccountID = None, deleteDomains = True):
         """
         Deletes specified Subaccount
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             bool notify - True, if you want to send an email notification. Otherwise, false (default True)
             string subAccountEmail - Email address of sub-account (default None)
             string publicAccountID - Public key of sub-account to delete. Use subAccountEmail or publicAccountID not both. (default None)
+            bool deleteDomains -  (default True)
         """
         return ApiClient.Request('GET', '/account/deletesubaccount', {
                     'notify': notify,
                     'subAccountEmail': subAccountEmail,
-                    'publicAccountID': publicAccountID})
+                    'publicAccountID': publicAccountID,
+                    'deleteDomains': deleteDomains})
+
+    def GetAccountAbilityToSendEmail():
+        """
+        Validate account's ability to send e-mail
+            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
+        Returns ApiTypes.AccountSendStatus
+        """
+        return ApiClient.Request('GET', '/account/getaccountabilitytosendemail')
 
     def GetSubAccountApiKey(subAccountEmail = None, publicAccountID = None):
         """
@@ -4008,13 +4471,17 @@ class Account:
                     'subAccountEmail': subAccountEmail,
                     'publicAccountID': publicAccountID})
 
-    def GetSubAccountList():
+    def GetSubAccountList(limit = 0, offset = 0):
         """
         Lists all of your subaccounts
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
+            int limit - Maximum of loaded items. (default 0)
+            int offset - How many items should be loaded ahead. (default 0)
         Returns List<ApiTypes.SubAccount>
         """
-        return ApiClient.Request('GET', '/account/getsubaccountlist')
+        return ApiClient.Request('GET', '/account/getsubaccountlist', {
+                    'limit': limit,
+                    'offset': offset})
 
     def Load():
         """
@@ -4039,6 +4506,14 @@ class Account:
         Returns List<ApiTypes.EmailCredits>
         """
         return ApiClient.Request('GET', '/account/loademailcreditshistory')
+
+    def LoadInfo():
+        """
+        Loads your account. Returns detailed information about your account.
+            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
+        Returns ApiTypes.Account
+        """
+        return ApiClient.Request('GET', '/account/loadinfo')
 
     def LoadLitmusCreditsHistory():
         """
@@ -4168,18 +4643,6 @@ class Account:
                     'from': EEfrom,
                     'to': to})
 
-    def ManageApiKeys(apiKey, action):
-        """
-        Manages your apikeys.
-            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            string apiKey - APIKey you would like to manage.
-            ApiTypes.APIKeyAction action - Specific action you would like to perform on the APIKey
-        Returns List<string>
-        """
-        return ApiClient.Request('GET', '/account/manageapikeys', {
-                    'apiKey': apiKey,
-                    'action': action.value})
-
     def Overview():
         """
         Shows summary for your account.
@@ -4215,6 +4678,21 @@ class Account:
                     'credits': credits,
                     'removeAll': removeAll})
 
+    def RequestNewApiKey():
+        """
+        Request a new default APIKey.
+            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
+        Returns string
+        """
+        return ApiClient.Request('GET', '/account/requestnewapikey')
+
+    def RequestPremiumSupport():
+        """
+        Request premium support for your account
+            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
+        """
+        return ApiClient.Request('GET', '/account/requestpremiumsupport')
+
     def RequestPrivateIP(count, notes):
         """
         Request a private IP for your Account
@@ -4226,7 +4704,7 @@ class Account:
                     'count': count,
                     'notes': notes})
 
-    def UpdateAdvancedOptions(enableClickTracking = None, enableLinkClickTracking = None, manageSubscriptions = None, manageSubscribedOnly = None, transactionalOnUnsubscribe = None, skipListUnsubscribe = None, autoTextFromHtml = None, allowCustomHeaders = None, bccEmail = None, contentTransferEncoding = None, emailNotificationForError = None, emailNotificationEmail = None, webNotificationUrl = None, webNotificationNotifyOncePerEmail = None, webNotificationForSent = None, webNotificationForOpened = None, webNotificationForClicked = None, webNotificationForUnsubscribed = None, webNotificationForAbuseReport = None, webNotificationForError = None, hubCallBackUrl = "", inboundDomain = None, inboundContactsOnly = None, lowCreditNotification = None, enableUITooltips = None, enableContactFeatures = None, notificationsEmails = None, unsubscribeNotificationsEmails = None, logoUrl = None, enableTemplateScripting = True, staleContactScore = None, staleContactInactiveDays = None, deliveryReason = None, tutorialsEnabled = None):
+    def UpdateAdvancedOptions(enableClickTracking = None, enableLinkClickTracking = None, manageSubscriptions = None, manageSubscribedOnly = None, transactionalOnUnsubscribe = None, skipListUnsubscribe = None, autoTextFromHtml = None, allowCustomHeaders = None, bccEmail = None, contentTransferEncoding = None, emailNotificationForError = None, emailNotificationEmail = None, webNotificationUrl = None, webNotificationNotifyOncePerEmail = None, webNotificationForSent = None, webNotificationForOpened = None, webNotificationForClicked = None, webNotificationForUnsubscribed = None, webNotificationForAbuseReport = None, webNotificationForError = None, hubCallBackUrl = "", inboundDomain = None, inboundContactsOnly = None, lowCreditNotification = None, enableUITooltips = None, enableContactFeatures = None, notificationsEmails = None, unsubscribeNotificationsEmails = None, logoUrl = None, enableTemplateScripting = True, staleContactScore = None, staleContactInactiveDays = None, deliveryReason = None, tutorialsEnabled = None, enableOpenTracking = None, consentTrackingOnUnsubscribe = None):
         """
         Update sending and tracking options of your account.
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
@@ -4255,7 +4733,7 @@ class Account:
             bool? inboundContactsOnly - True, if you want inbound email to only process contacts from your account. Otherwise, false (default None)
             bool? lowCreditNotification - True, if you want to receive low credit email notifications. Otherwise, false (default None)
             bool? enableUITooltips - True, if account has tooltips active. Otherwise, false (default None)
-            bool? enableContactFeatures - True, if you want to use Advanced Tools.  Otherwise, false (default None)
+            bool? enableContactFeatures - True, if you want to use Contact Delivery Tools.  Otherwise, false (default None)
             string notificationsEmails - Email addresses to send a copy of all notifications from our system. Separated by semicolon (default None)
             string unsubscribeNotificationsEmails - Emails, separated by semicolon, to which the notification about contact unsubscribing should be sent to (default None)
             string logoUrl - URL to your logo image. (default None)
@@ -4263,7 +4741,9 @@ class Account:
             int? staleContactScore - (0 means this functionality is NOT enabled) Score, depending on the number of times you have sent to a recipient, at which the given recipient should be moved to the Stale status (default None)
             int? staleContactInactiveDays - (0 means this functionality is NOT enabled) Number of days of inactivity for a contact after which the given recipient should be moved to the Stale status (default None)
             string deliveryReason - Why your clients are receiving your emails. (default None)
-            bool? tutorialsEnabled -  (default None)
+            bool? tutorialsEnabled - True, if you want to enable Dashboard Tutotials (default None)
+            bool? enableOpenTracking - True, if you want to track opens. Otherwise, false (default None)
+            bool? consentTrackingOnUnsubscribe -  (default None)
         Returns ApiTypes.AdvancedOptions
         """
         return ApiClient.Request('GET', '/account/updateadvancedoptions', {
@@ -4300,7 +4780,9 @@ class Account:
                     'staleContactScore': staleContactScore,
                     'staleContactInactiveDays': staleContactInactiveDays,
                     'deliveryReason': deliveryReason,
-                    'tutorialsEnabled': tutorialsEnabled})
+                    'tutorialsEnabled': tutorialsEnabled,
+                    'enableOpenTracking': enableOpenTracking,
+                    'consentTrackingOnUnsubscribe': consentTrackingOnUnsubscribe})
 
     def UpdateCustomBranding(enablePrivateBranding = False, logoUrl = None, supportLink = None, privateBrandingUrl = None, smtpAddress = None, smtpAlternative = None, paymentUrl = None):
         """
@@ -4386,7 +4868,7 @@ class Account:
             string subAccountEmail - Email address of sub-account (default None)
             string publicAccountID - Public key of sub-account to update. Use subAccountEmail or publicAccountID not both. (default None)
             ApiTypes.SendingPermission? sendingPermission - Sending permission setting for account (default None)
-            bool? enableContactFeatures - True, if you want to use Advanced Tools.  Otherwise, false (default None)
+            bool? enableContactFeatures - True, if you want to use Contact Delivery Tools.  Otherwise, false (default None)
             string poolName - Name of your custom IP Pool to be used in the sending process (default None)
         """
         return ApiClient.Request('GET', '/account/updatesubaccountsettings', {
@@ -4403,70 +4885,6 @@ class Account:
                     'sendingPermission': sendingPermission,
                     'enableContactFeatures': enableContactFeatures,
                     'poolName': poolName})
-
-
-""" 
-Managing attachments uploaded to your account.
-"""
-class Attachment:
-
-    def Delete(attachmentID):
-        """
-        Permanently deletes attachment file from your account
-            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            long attachmentID - ID number of your attachment.
-        """
-        return ApiClient.Request('GET', '/attachment/delete', {
-                    'attachmentID': attachmentID})
-
-    def Get(attachmentID):
-        """
-        Gets address of chosen Attachment
-            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            long attachmentID - ID number of your attachment.
-        Returns File
-        """
-        return ApiClient.Request('GET', '/attachment/get', {
-                    'attachmentID': attachmentID})
-
-    def List(msgID):
-        """
-        Lists your available Attachments in the given email
-            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            string msgID - ID number of selected message.
-        Returns List<ApiTypes.Attachment>
-        """
-        return ApiClient.Request('GET', '/attachment/list', {
-                    'msgID': msgID})
-
-    def ListAll():
-        """
-        Lists all your available attachments
-            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-        Returns List<ApiTypes.Attachment>
-        """
-        return ApiClient.Request('GET', '/attachment/listall')
-
-    def Remove(fileName):
-        """
-        Permanently removes attachment file from your account
-            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            string fileName - Name of your file.
-        """
-        return ApiClient.Request('GET', '/attachment/remove', {
-                    'fileName': fileName})
-
-    def Upload(attachmentFile):
-        """
-        Uploads selected file to the server using http form upload format (MIME multipart/form-data) or PUT method. The attachments expire after 30 days.
-            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            File attachmentFile - Content of your attachment.
-        Returns ApiTypes.Attachment
-        """
-        attachments = []
-        for name in attachmentFile:
-            attachments.append(('attachments', open(name, 'rb')))
-        return ApiClient.Request('POST', '/attachment/upload', attachments)
 
 
 """ 
@@ -4636,30 +5054,15 @@ Methods used to manage your Contacts.
 """
 class Contact:
 
-    def Add(publicAccountID, email, publicListID = [], listName = [], title = None, firstName = None, lastName = None, phone = None, mobileNumber = None, notes = None, gender = None, birthDate = None, city = None, state = None, postalCode = None, country = None, organizationName = None, website = None, annualRevenue = None, industry = None, numberOfEmployees = None, source = ApiTypes.ContactSource.ContactApi, returnUrl = None, sourceUrl = None, activationReturnUrl = None, activationTemplate = None, sendActivation = True, consentDate = None, consentIP = None, field = {}, notifyEmail = None):
+    def Add(publicAccountID, email, publicListID = {}, listName = [], firstName = None, lastName = None, source = ApiTypes.ContactSource.ContactApi, returnUrl = None, sourceUrl = None, activationReturnUrl = None, activationTemplate = None, sendActivation = True, consentDate = None, consentIP = None, field = {}, notifyEmail = None, alreadyActiveUrl = None, consentTracking = ApiTypes.ConsentTracking.Unknown):
         """
         Add a new contact and optionally to one of your lists.  Note that your API KEY is not required for this call.
             string publicAccountID - Public key for limited access to your account such as contact/add so you can use it safely on public websites.
             string email - Proper email address.
-            string[] publicListID - ID code of list (default None)
+            IEnumerable<string> publicListID - ID code of list (default None)
             string[] listName - Name of your list. (default None)
-            string title - Title (default None)
             string firstName - First name. (default None)
             string lastName - Last name. (default None)
-            string phone - Phone number (default None)
-            string mobileNumber - Mobile phone number (default None)
-            string notes - Free form field of notes (default None)
-            string gender - Your gender (default None)
-            DateTime? birthDate - Date of birth in YYYY-MM-DD format (default None)
-            string city - City. (default None)
-            string state - State or province. (default None)
-            string postalCode - Zip/postal code. (default None)
-            string country - Name of country. (default None)
-            string organizationName - Name of organization (default None)
-            string website - HTTP address of your website. (default None)
-            int? annualRevenue - Annual revenue of contact (default None)
-            string industry - Industry contact works in (default None)
-            int? numberOfEmployees - Number of employees (default None)
             ApiTypes.ContactSource source - Specifies the way of uploading the contact (default ApiTypes.ContactSource.ContactApi)
             string returnUrl - URL to navigate to after account creation (default None)
             string sourceUrl - URL from which request was sent. (default None)
@@ -4670,6 +5073,8 @@ class Contact:
             string consentIP - IP address of consent to send this contact(s) your email. If not provided your current public IP address is used for consent. (default None)
             Dictionary<string, string> field - Custom contact field like firstname, lastname, city etc. Request parameters prefixed by field_ like field_firstname, field_lastname  (default None)
             string notifyEmail - Emails, separated by semicolon, to which the notification about contact subscribing should be sent to (default None)
+            string alreadyActiveUrl -  (default None)
+            ApiTypes.ConsentTracking consentTracking -  (default ApiTypes.ConsentTracking.Unknown)
         Returns string
         """
         return ApiClient.Request('GET', '/contact/add', {
@@ -4677,23 +5082,8 @@ class Contact:
                     'email': email,
                     'publicListID': ";".join(map(str, publicListID)),
                     'listName': ";".join(map(str, listName)),
-                    'title': title,
                     'firstName': firstName,
                     'lastName': lastName,
-                    'phone': phone,
-                    'mobileNumber': mobileNumber,
-                    'notes': notes,
-                    'gender': gender,
-                    'birthDate': birthDate,
-                    'city': city,
-                    'state': state,
-                    'postalCode': postalCode,
-                    'country': country,
-                    'organizationName': organizationName,
-                    'website': website,
-                    'annualRevenue': annualRevenue,
-                    'industry': industry,
-                    'numberOfEmployees': numberOfEmployees,
                     'source': source.value,
                     'returnUrl': returnUrl,
                     'sourceUrl': sourceUrl,
@@ -4703,11 +5093,13 @@ class Contact:
                     'consentDate': consentDate,
                     'consentIP': consentIP,
                     'field': field,
-                    'notifyEmail': notifyEmail})
+                    'notifyEmail': notifyEmail,
+                    'alreadyActiveUrl': alreadyActiveUrl,
+                    'consentTracking': consentTracking.value})
 
     def AddBlocked(email, status):
         """
-        Manually add or update a contacts status to Abuse, Bounced or Unsubscribed status (blocked).
+        Manually add or update a contacts status to Abuse or Unsubscribed status (blocked).
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             string email - Proper email address.
             ApiTypes.ContactStatus status - Name of status: Active, Engaged, Inactive, Abuse, Bounced, Unsubscribed.
@@ -4729,20 +5121,18 @@ class Contact:
                     'name': name,
                     'value': value})
 
-    def ChangeStatus(status, rule = None, emails = {}, allContacts = False):
+    def ChangeStatus(status, rule = None, emails = {}):
         """
         Changes status of selected Contacts. You may provide RULE for selection or specify list of Contact IDs.
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             ApiTypes.ContactStatus status - Name of status: Active, Engaged, Inactive, Abuse, Bounced, Unsubscribed.
             string rule - Query used for filtering. (default None)
             IEnumerable<string> emails - Comma delimited list of contact emails (default None)
-            bool allContacts - True: Include every Contact in your Account. Otherwise, false (default False)
         """
         return ApiClient.Request('GET', '/contact/changestatus', {
                     'status': status.value,
                     'rule': rule,
-                    'emails': ";".join(map(str, emails)),
-                    'allContacts': allContacts})
+                    'emails': ";".join(map(str, emails))})
 
     def CountByStatus(rule = None, allContacts = False):
         """
@@ -4756,27 +5146,36 @@ class Contact:
                     'rule': rule,
                     'allContacts': allContacts})
 
-    def Delete(rule = None, emails = {}, allContacts = False):
+    def CountByUnsubscribeReason(EEfrom = None, to = None):
+        """
+        Returns count of unsubscribe reasons for unsubscribed and complaint contacts.
+            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
+            DateTime? from - Starting date for search in YYYY-MM-DDThh:mm:ss format. (default None)
+            DateTime? to - Ending date for search in YYYY-MM-DDThh:mm:ss format. (default None)
+        Returns ApiTypes.ContactUnsubscribeReasonCounts
+        """
+        return ApiClient.Request('GET', '/contact/countbyunsubscribereason', {
+                    'from': EEfrom,
+                    'to': to})
+
+    def Delete(rule = None, emails = {}):
         """
         Permanantly deletes the contacts provided.  You can provide either a qualified rule or a list of emails (comma separated string).
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             string rule - Query used for filtering. (default None)
             IEnumerable<string> emails - Comma delimited list of contact emails (default None)
-            bool allContacts - True: Include every Contact in your Account. Otherwise, false (default False)
         """
         return ApiClient.Request('GET', '/contact/delete', {
                     'rule': rule,
-                    'emails': ";".join(map(str, emails)),
-                    'allContacts': allContacts})
+                    'emails': ";".join(map(str, emails))})
 
-    def Export(fileFormat = ApiTypes.ExportFileFormats.Csv, rule = None, emails = {}, allContacts = False, compressionFormat = ApiTypes.CompressionFormat.EENone, fileName = None):
+    def Export(fileFormat = ApiTypes.ExportFileFormats.Csv, rule = None, emails = {}, compressionFormat = ApiTypes.CompressionFormat.EENone, fileName = None):
         """
-        Export selected Contacts to JSON.
+        Export selected Contacts to file.
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             ApiTypes.ExportFileFormats fileFormat - Format of the exported file (default ApiTypes.ExportFileFormats.Csv)
             string rule - Query used for filtering. (default None)
             IEnumerable<string> emails - Comma delimited list of contact emails (default None)
-            bool allContacts - True: Include every Contact in your Account. Otherwise, false (default False)
             ApiTypes.CompressionFormat compressionFormat - FileResponse compression format. None or Zip. (default ApiTypes.CompressionFormat.EENone)
             string fileName - Name of your file. (default None)
         Returns ApiTypes.ExportLink
@@ -4785,7 +5184,24 @@ class Contact:
                     'fileFormat': fileFormat.value,
                     'rule': rule,
                     'emails': ";".join(map(str, emails)),
-                    'allContacts': allContacts,
+                    'compressionFormat': compressionFormat.value,
+                    'fileName': fileName})
+
+    def ExportUnsubscribeReasonCount(EEfrom = None, to = None, fileFormat = ApiTypes.ExportFileFormats.Csv, compressionFormat = ApiTypes.CompressionFormat.EENone, fileName = None):
+        """
+        Export contacts' unsubscribe reasons count to file.
+            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
+            DateTime? from - Starting date for search in YYYY-MM-DDThh:mm:ss format. (default None)
+            DateTime? to - Ending date for search in YYYY-MM-DDThh:mm:ss format. (default None)
+            ApiTypes.ExportFileFormats fileFormat - Format of the exported file (default ApiTypes.ExportFileFormats.Csv)
+            ApiTypes.CompressionFormat compressionFormat - FileResponse compression format. None or Zip. (default ApiTypes.CompressionFormat.EENone)
+            string fileName - Name of your file. (default None)
+        Returns ApiTypes.ExportLink
+        """
+        return ApiClient.Request('GET', '/contact/exportunsubscribereasoncount', {
+                    'from': EEfrom,
+                    'to': to,
+                    'fileFormat': fileFormat.value,
                     'compressionFormat': compressionFormat.value,
                     'fileName': fileName})
 
@@ -4827,19 +5243,17 @@ class Contact:
                     'limit': limit,
                     'offset': offset})
 
-    def List(rule = None, allContacts = False, limit = 20, offset = 0):
+    def List(rule = None, limit = 20, offset = 0):
         """
         List of all contacts. If you have not specified RULE, all Contacts will be listed.
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             string rule - Query used for filtering. (default None)
-            bool allContacts - True: Include every Contact in your Account. Otherwise, false (default False)
             int limit - Maximum of loaded items. (default 20)
             int offset - How many items should be loaded ahead. (default 0)
         Returns List<ApiTypes.Contact>
         """
         return ApiClient.Request('GET', '/contact/list', {
                     'rule': rule,
-                    'allContacts': allContacts,
                     'limit': limit,
                     'offset': offset})
 
@@ -4883,46 +5297,36 @@ class Contact:
                     'limit': limit,
                     'offset': offset})
 
-    def QuickAdd(emails, firstName = None, lastName = None, title = None, organization = None, industry = None, city = None, country = None, state = None, zip = None, publicListID = None, listName = None, status = ApiTypes.ContactStatus.Active, notes = None, consentDate = None, consentIP = None, notifyEmail = None):
+    def QuickAdd(emails, firstName = None, lastName = None, publicListID = None, listName = None, status = ApiTypes.ContactStatus.Active, notes = None, consentDate = None, consentIP = None, field = {}, notifyEmail = None, consentTracking = ApiTypes.ConsentTracking.Unknown):
         """
         Add new Contact to one of your Lists.
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             IEnumerable<string> emails - Comma delimited list of contact emails
             string firstName - First name. (default None)
             string lastName - Last name. (default None)
-            string title - Title (default None)
-            string organization - Name of organization (default None)
-            string industry - Industry contact works in (default None)
-            string city - City. (default None)
-            string country - Name of country. (default None)
-            string state - State or province. (default None)
-            string zip - Zip/postal code. (default None)
             string publicListID - ID code of list (default None)
             string listName - Name of your list. (default None)
             ApiTypes.ContactStatus status - Name of status: Active, Engaged, Inactive, Abuse, Bounced, Unsubscribed. (default ApiTypes.ContactStatus.Active)
             string notes - Free form field of notes (default None)
             DateTime? consentDate - Date of consent to send this contact(s) your email. If not provided current date is used for consent. (default None)
             string consentIP - IP address of consent to send this contact(s) your email. If not provided your current public IP address is used for consent. (default None)
+            Dictionary<string, string> field - Custom contact field like firstname, lastname, city etc. Request parameters prefixed by field_ like field_firstname, field_lastname  (default None)
             string notifyEmail - Emails, separated by semicolon, to which the notification about contact subscribing should be sent to (default None)
+            ApiTypes.ConsentTracking consentTracking -  (default ApiTypes.ConsentTracking.Unknown)
         """
         return ApiClient.Request('GET', '/contact/quickadd', {
                     'emails': ";".join(map(str, emails)),
                     'firstName': firstName,
                     'lastName': lastName,
-                    'title': title,
-                    'organization': organization,
-                    'industry': industry,
-                    'city': city,
-                    'country': country,
-                    'state': state,
-                    'zip': zip,
                     'publicListID': publicListID,
                     'listName': listName,
                     'status': status.value,
                     'notes': notes,
                     'consentDate': consentDate,
                     'consentIP': consentIP,
-                    'notifyEmail': notifyEmail})
+                    'field': field,
+                    'notifyEmail': notifyEmail,
+                    'consentTracking': consentTracking.value})
 
     def Subscribe(publicAccountID):
         """
@@ -4933,81 +5337,27 @@ class Contact:
         return ApiClient.Request('GET', '/contact/subscribe', {
                     'publicAccountID': publicAccountID})
 
-    def Update(email, firstName = None, lastName = None, organizationName = None, title = None, city = None, state = None, country = None, zip = None, birthDate = None, gender = None, phone = None, activate = None, industry = None, numberOfEmployees = 0, annualRevenue = None, purchaseCount = 0, firstPurchase = None, lastPurchase = None, notes = None, websiteUrl = None, mobileNumber = None, faxNumber = None, linkedInBio = None, linkedInConnections = 0, twitterBio = None, twitterUsername = None, twitterProfilePhoto = None, twitterFollowerCount = 0, pageViews = 0, visits = 0, clearRestOfFields = True, field = {}):
+    def Update(email, firstName = None, lastName = None, clearRestOfFields = True, field = {}, customFields = None):
         """
         Update selected contact. Omitted contact's fields will be reset by default (see the clearRestOfFields parameter)
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             string email - Proper email address.
             string firstName - First name. (default None)
             string lastName - Last name. (default None)
-            string organizationName - Name of organization (default None)
-            string title - Title (default None)
-            string city - City. (default None)
-            string state - State or province. (default None)
-            string country - Name of country. (default None)
-            string zip - Zip/postal code. (default None)
-            string birthDate - Date of birth in YYYY-MM-DD format (default None)
-            string gender - Your gender (default None)
-            string phone - Phone number (default None)
-            bool? activate - True, if Contact should be activated. Otherwise, false (default None)
-            string industry - Industry contact works in (default None)
-            int numberOfEmployees - Number of employees (default 0)
-            string annualRevenue - Annual revenue of contact (default None)
-            int purchaseCount - Number of purchases contact has made (default 0)
-            string firstPurchase - Date of first purchase in YYYY-MM-DD format (default None)
-            string lastPurchase - Date of last purchase in YYYY-MM-DD format (default None)
-            string notes - Free form field of notes (default None)
-            string websiteUrl - Website of contact (default None)
-            string mobileNumber - Mobile phone number (default None)
-            string faxNumber - Fax number (default None)
-            string linkedInBio - Biography for Linked-In (default None)
-            int linkedInConnections - Number of Linked-In connections (default 0)
-            string twitterBio - Biography for Twitter (default None)
-            string twitterUsername - User name for Twitter (default None)
-            string twitterProfilePhoto - URL for Twitter photo (default None)
-            int twitterFollowerCount - Number of Twitter followers (default 0)
-            int pageViews - Number of page views (default 0)
-            int visits - Number of website visits (default 0)
             bool clearRestOfFields - States if the fields that were omitted in this request are to be reset or should they be left with their current value (default True)
             Dictionary<string, string> field - Custom contact field like firstname, lastname, city etc. Request parameters prefixed by field_ like field_firstname, field_lastname  (default None)
+            string customFields - Custom contact field like firstname, lastname, city etc. JSON serialized text like { "city":"london" }  (default None)
         Returns ApiTypes.Contact
         """
         return ApiClient.Request('GET', '/contact/update', {
                     'email': email,
                     'firstName': firstName,
                     'lastName': lastName,
-                    'organizationName': organizationName,
-                    'title': title,
-                    'city': city,
-                    'state': state,
-                    'country': country,
-                    'zip': zip,
-                    'birthDate': birthDate,
-                    'gender': gender,
-                    'phone': phone,
-                    'activate': activate,
-                    'industry': industry,
-                    'numberOfEmployees': numberOfEmployees,
-                    'annualRevenue': annualRevenue,
-                    'purchaseCount': purchaseCount,
-                    'firstPurchase': firstPurchase,
-                    'lastPurchase': lastPurchase,
-                    'notes': notes,
-                    'websiteUrl': websiteUrl,
-                    'mobileNumber': mobileNumber,
-                    'faxNumber': faxNumber,
-                    'linkedInBio': linkedInBio,
-                    'linkedInConnections': linkedInConnections,
-                    'twitterBio': twitterBio,
-                    'twitterUsername': twitterUsername,
-                    'twitterProfilePhoto': twitterProfilePhoto,
-                    'twitterFollowerCount': twitterFollowerCount,
-                    'pageViews': pageViews,
-                    'visits': visits,
                     'clearRestOfFields': clearRestOfFields,
-                    'field': field})
+                    'field': field,
+                    'customFields': customFields})
 
-    def Upload(contactFile, allowUnsubscribe = False, listID = None, listName = None, status = ApiTypes.ContactStatus.Active, consentDate = None, consentIP = None):
+    def Upload(contactFile, allowUnsubscribe = False, listID = None, listName = None, status = ApiTypes.ContactStatus.Active, consentDate = None, consentIP = None, consentTracking = ApiTypes.ConsentTracking.Unknown):
         """
         Upload contacts in CSV file.
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
@@ -5018,6 +5368,7 @@ class Contact:
             ApiTypes.ContactStatus status - Name of status: Active, Engaged, Inactive, Abuse, Bounced, Unsubscribed. (default ApiTypes.ContactStatus.Active)
             DateTime? consentDate - Date of consent to send this contact(s) your email. If not provided current date is used for consent. (default None)
             string consentIP - IP address of consent to send this contact(s) your email. If not provided your current public IP address is used for consent. (default None)
+            ApiTypes.ConsentTracking consentTracking -  (default ApiTypes.ConsentTracking.Unknown)
         Returns int
         """
         attachments = []
@@ -5029,7 +5380,8 @@ class Contact:
                     'listName': listName,
                     'status': status.value,
                     'consentDate': consentDate,
-                    'consentIP': consentIP}, attachments)
+                    'consentIP': consentIP,
+                    'consentTracking': consentTracking.value}, attachments)
 
 
 """ 
@@ -5079,6 +5431,7 @@ class Domain:
         Verification of DKIM record for domain
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             string domain - Name of selected domain.
+        Returns string
         """
         return ApiClient.Request('GET', '/domain/verifydkim', {
                     'domain': domain})
@@ -5088,6 +5441,7 @@ class Domain:
         Verification of MX record for domain
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             string domain - Name of selected domain.
+        Returns string
         """
         return ApiClient.Request('GET', '/domain/verifymx', {
                     'domain': domain})
@@ -5097,6 +5451,7 @@ class Domain:
         Verification of SPF record for domain
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             string domain - Name of selected domain.
+        Returns string
         """
         return ApiClient.Request('GET', '/domain/verifyspf', {
                     'domain': domain})
@@ -5107,6 +5462,7 @@ class Domain:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             string domain - Name of selected domain.
             ApiTypes.TrackingType trackingType -  (default ApiTypes.TrackingType.Http)
+        Returns string
         """
         return ApiClient.Request('GET', '/domain/verifytracking', {
                     'domain': domain,
@@ -5148,7 +5504,7 @@ class Email:
                     'showErrors': showErrors,
                     'showMessageIDs': showMessageIDs})
 
-    def Send(subject = None, EEfrom = None, fromName = None, sender = None, senderName = None, msgFrom = None, msgFromName = None, replyTo = None, replyToName = None, to = {}, msgTo = [], msgCC = [], msgBcc = [], lists = {}, segments = {}, mergeSourceFilename = None, channel = None, bodyHtml = None, bodyText = None, charset = None, charsetBodyHtml = None, charsetBodyText = None, encodingType = ApiTypes.EncodingType.EENone, template = None, attachmentFiles = {}, headers = {}, postBack = None, merge = {}, timeOffSetMinutes = None, poolName = None, isTransactional = False):
+    def Send(subject = None, EEfrom = None, fromName = None, sender = None, senderName = None, msgFrom = None, msgFromName = None, replyTo = None, replyToName = None, to = {}, msgTo = {}, msgCC = {}, msgBcc = {}, lists = {}, segments = {}, mergeSourceFilename = None, dataSource = None, channel = None, bodyHtml = None, bodyText = None, charset = None, charsetBodyHtml = None, charsetBodyText = None, encodingType = ApiTypes.EncodingType.EENone, template = None, attachmentFiles = {}, headers = {}, postBack = None, merge = {}, timeOffSetMinutes = None, poolName = None, isTransactional = False, attachments = {}, trackOpens = None, trackClicks = None):
         """
         Submit emails. The HTTP POST request is suggested. The default, maximum (accepted by us) size of an email is 10 MB in total, with or without attachments included. For suggested implementations please refer to https://elasticemail.com/support/http-api/
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
@@ -5162,12 +5518,13 @@ class Email:
             string replyTo - Email address to reply to (default None)
             string replyToName - Display name of the reply to address (default None)
             IEnumerable<string> to - List of email recipients (each email is treated separately, like a BCC). Separated by comma or semicolon. We suggest using the "msgTo" parameter if backward compatibility with API version 1 is not a must. (default None)
-            string[] msgTo - Optional parameter. Will be ignored if the 'to' parameter is also provided. List of email recipients (visible to all other recipients of the message as TO MIME header). Separated by comma or semicolon. (default None)
-            string[] msgCC - Optional parameter. Will be ignored if the 'to' parameter is also provided. List of email recipients (visible to all other recipients of the message as CC MIME header). Separated by comma or semicolon. (default None)
-            string[] msgBcc - Optional parameter. Will be ignored if the 'to' parameter is also provided. List of email recipients (each email is treated seperately). Separated by comma or semicolon. (default None)
+            IEnumerable<string> msgTo - Optional parameter. Will be ignored if the 'to' parameter is also provided. List of email recipients (visible to all other recipients of the message as TO MIME header). Separated by comma or semicolon. (default None)
+            IEnumerable<string> msgCC - Optional parameter. Will be ignored if the 'to' parameter is also provided. List of email recipients (visible to all other recipients of the message as CC MIME header). Separated by comma or semicolon. (default None)
+            IEnumerable<string> msgBcc - Optional parameter. Will be ignored if the 'to' parameter is also provided. List of email recipients (each email is treated seperately). Separated by comma or semicolon. (default None)
             IEnumerable<string> lists - The name of a contact list you would like to send to. Separate multiple contact lists by commas or semicolons. (default None)
             IEnumerable<string> segments - The name of a segment you would like to send to. Separate multiple segments by comma or semicolon. Insert "0" for all Active contacts. (default None)
             string mergeSourceFilename - File name one of attachments which is a CSV list of Recipients. (default None)
+            string dataSource - Name or ID of the previously uploaded file which should be a CSV list of Recipients. (default None)
             string channel - An ID field (max 191 chars) that can be used for reporting [will default to HTTP API or SMTP API] (default None)
             string bodyHtml - Html email body (default None)
             string bodyText - Text email body (default None)
@@ -5176,13 +5533,16 @@ class Email:
             string charsetBodyText - Sets charset for body text MIME part (overrides default value from charset parameter) (default None)
             ApiTypes.EncodingType encodingType - 0 for None, 1 for Raw7Bit, 2 for Raw8Bit, 3 for QuotedPrintable, 4 for Base64 (Default), 5 for Uue  note that you can also provide the text version such as "Raw7Bit" for value 1.  NOTE: Base64 or QuotedPrintable is recommended if you are validating your domain(s) with DKIM. (default ApiTypes.EncodingType.EENone)
             string template - The ID of an email template you have created in your account. (default None)
-            IEnumerableFile attachmentFiles - Attachment files. These files should be provided with the POST multipart file upload, not directly in the request's URL. Should also include merge CSV file (default None)
+            IEnumerableFile attachmentFiles - Attachment files. These files should be provided with the POST multipart file upload, not directly in the request's URL. Can also include merge CSV file (default None)
             Dictionary<string, string> headers - Optional Custom Headers. Request parameters prefixed by headers_ like headers_customheader1, headers_customheader2. Note: a space is required after the colon before the custom header value. headers_xmailer=xmailer: header-value1 (default None)
             string postBack - Optional header returned in notifications. (default None)
             Dictionary<string, string> merge - Request parameters prefixed by merge_ like merge_firstname, merge_lastname. If sending to a template you can send merge_ fields to merge data with the template. Template fields are entered with {firstname}, {lastname} etc. (default None)
-            string timeOffSetMinutes - Number of minutes in the future this email should be sent (default None)
+            string timeOffSetMinutes - Number of minutes in the future this email should be sent up to a maximum of 1 year (524160 minutes) (default None)
             string poolName - Name of your custom IP Pool to be used in the sending process (default None)
             bool isTransactional - True, if email is transactional (non-bulk, non-marketing, non-commercial). Otherwise, false (default False)
+            IEnumerable<string> attachments - Names or IDs of attachments previously uploaded to your account that should be sent with this e-mail. (default None)
+            bool? trackOpens - Should the opens be tracked? If no value has been provided, account's default setting will be used. (default None)
+            bool? trackClicks - Should the clicks be tracked? If no value has been provided, account's default setting will be used. (default None)
         Returns ApiTypes.EmailSend
         """
         attachments = []
@@ -5205,6 +5565,7 @@ class Email:
                     'lists': ";".join(map(str, lists)),
                     'segments': ";".join(map(str, segments)),
                     'mergeSourceFilename': mergeSourceFilename,
+                    'dataSource': dataSource,
                     'channel': channel,
                     'bodyHtml': bodyHtml,
                     'bodyText': bodyText,
@@ -5218,7 +5579,10 @@ class Email:
                     'merge': merge,
                     'timeOffSetMinutes': timeOffSetMinutes,
                     'poolName': poolName,
-                    'isTransactional': isTransactional}, attachments)
+                    'isTransactional': isTransactional,
+                    'attachments': ";".join(map(str, attachments)),
+                    'trackOpens': trackOpens,
+                    'trackClicks': trackClicks}, attachments)
 
     def Status(messageID):
         """
@@ -5249,7 +5613,7 @@ class Export:
         """
         Check the current status of the export.
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            Guid publicExportID - 
+            Guid publicExportID -
         Returns ApiTypes.ExportStatus
         """
         return ApiClient.Request('GET', '/export/checkstatus', {
@@ -5267,7 +5631,7 @@ class Export:
         """
         Delete the specified export.
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            Guid publicExportID - 
+            Guid publicExportID -
         """
         return ApiClient.Request('GET', '/export/delete', {
                     'publicExportID': publicExportID})
@@ -5283,6 +5647,79 @@ class Export:
         return ApiClient.Request('GET', '/export/list', {
                     'limit': limit,
                     'offset': offset})
+
+
+""" 
+Manage the files on your account
+"""
+class File:
+
+    def Delete(fileID = None, filename = None):
+        """
+        Permanently deletes the file from your account
+            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
+            int? fileID -  (default None)
+            string filename - Name of your file. (default None)
+        """
+        return ApiClient.Request('GET', '/file/delete', {
+                    'fileID': fileID,
+                    'filename': filename})
+
+    def Download(filename = None, fileID = None):
+        """
+        Gets content of the chosen File
+            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
+            string filename - Name of your file. (default None)
+            int? fileID -  (default None)
+        Returns File
+        """
+        return ApiClient.Request('GET', '/file/download', {
+                    'filename': filename,
+                    'fileID': fileID})
+
+    def List(msgID):
+        """
+        Lists your available Attachments in the given email
+            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
+            string msgID - ID number of selected message.
+        Returns List<ApiTypes.File>
+        """
+        return ApiClient.Request('GET', '/file/list', {
+                    'msgID': msgID})
+
+    def ListAll():
+        """
+        Lists all your available files
+            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
+        Returns List<ApiTypes.File>
+        """
+        return ApiClient.Request('GET', '/file/listall')
+
+    def Load(filename):
+        """
+        Gets chosen File
+            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
+            string filename - Name of your file.
+        Returns ApiTypes.File
+        """
+        return ApiClient.Request('GET', '/file/load', {
+                    'filename': filename})
+
+    def Upload(file, name = None, expiresAfterDays = 35):
+        """
+        Uploads selected file to the server using http form upload format (MIME multipart/form-data) or PUT method.
+            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
+            File file -
+            string name - Filename (default None)
+            int? expiresAfterDays - After how many days should the file be deleted. (default 35)
+        Returns ApiTypes.File
+        """
+        attachments = []
+        for name in file:
+            attachments.append(('attachments', open(name, 'rb')))
+        return ApiClient.Request('POST', '/file/upload', {
+                    'name': name,
+                    'expiresAfterDays': expiresAfterDays}, attachments)
 
 
 """ 
@@ -5443,7 +5880,7 @@ class List:
         return ApiClient.Request('GET', '/list/load', {
                     'listName': listName})
 
-    def MoveContacts(oldListName, newListName, emails = {}, moveAll = None, statuses = {}):
+    def MoveContacts(oldListName, newListName, emails = {}, moveAll = None, statuses = {}, rule = None):
         """
         Move selected contacts from one List to another
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
@@ -5452,13 +5889,15 @@ class List:
             IEnumerable<string> emails - Comma delimited list of contact emails (default None)
             bool? moveAll - TRUE - moves all contacts; FALSE - moves contacts provided in the 'emails' parameter. This is ignored if the 'statuses' parameter has been provided (default None)
             IEnumerable<ApiTypes.ContactStatus> statuses - List of contact statuses which are eligible to move. This ignores the 'moveAll' parameter (default None)
+            string rule - Query used for filtering. (default None)
         """
         return ApiClient.Request('GET', '/list/movecontacts', {
                     'oldListName': oldListName,
                     'newListName': newListName,
                     'emails': ";".join(map(str, emails)),
                     'moveAll': moveAll,
-                    'statuses': ";".join(map(str, statuses))})
+                    'statuses': ";".join(map(str, statuses)),
+                    'rule': rule})
 
     def RemoveContacts(listName, rule = None, emails = {}):
         """
@@ -5503,7 +5942,7 @@ class Log:
                     'channelName': channelName,
                     'transactionID': transactionID})
 
-    def Export(statuses, fileFormat = ApiTypes.ExportFileFormats.Csv, EEfrom = None, to = None, channelID = 0, limit = 0, offset = 0, includeEmail = True, includeSms = True, messageCategory = {}, compressionFormat = ApiTypes.CompressionFormat.EENone, fileName = None, email = None):
+    def Export(statuses, fileFormat = ApiTypes.ExportFileFormats.Csv, EEfrom = None, to = None, channelName = None, includeEmail = True, includeSms = True, messageCategory = {}, compressionFormat = ApiTypes.CompressionFormat.EENone, fileName = None, email = None):
         """
         Export email log information to the specified file format.
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
@@ -5511,9 +5950,7 @@ class Log:
             ApiTypes.ExportFileFormats fileFormat - Format of the exported file (default ApiTypes.ExportFileFormats.Csv)
             DateTime? from - Start date. (default None)
             DateTime? to - End date. (default None)
-            int channelID - ID number of selected Channel. (default 0)
-            int limit - Maximum of loaded items. (default 0)
-            int offset - How many items should be loaded ahead. (default 0)
+            string channelName - Name of selected channel. (default None)
             bool includeEmail - True: Search includes emails. Otherwise, false. (default True)
             bool includeSms - True: Search includes SMS. Otherwise, false. (default True)
             IEnumerable<ApiTypes.MessageCategory> messageCategory - ID of message category (default None)
@@ -5527,9 +5964,7 @@ class Log:
                     'fileFormat': fileFormat.value,
                     'from': EEfrom,
                     'to': to,
-                    'channelID': channelID,
-                    'limit': limit,
-                    'offset': offset,
+                    'channelName': channelName,
                     'includeEmail': includeEmail,
                     'includeSms': includeSms,
                     'messageCategory': ";".join(map(str, messageCategory)),
@@ -5537,13 +5972,13 @@ class Log:
                     'fileName': fileName,
                     'email': email})
 
-    def ExportLinkTracking(channelID, EEfrom, to, fileFormat = ApiTypes.ExportFileFormats.Csv, limit = 0, offset = 0, compressionFormat = ApiTypes.CompressionFormat.EENone, fileName = None):
+    def ExportLinkTracking(EEfrom, to, channelName = None, fileFormat = ApiTypes.ExportFileFormats.Csv, limit = 0, offset = 0, compressionFormat = ApiTypes.CompressionFormat.EENone, fileName = None):
         """
         Export detailed link tracking information to the specified file format.
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            int channelID - ID number of selected Channel.
             DateTime? from - Starting date for search in YYYY-MM-DDThh:mm:ss format.
             DateTime? to - Ending date for search in YYYY-MM-DDThh:mm:ss format.
+            string channelName - Name of selected channel. (default None)
             ApiTypes.ExportFileFormats fileFormat - Format of the exported file (default ApiTypes.ExportFileFormats.Csv)
             int limit - Maximum of loaded items. (default 0)
             int offset - How many items should be loaded ahead. (default 0)
@@ -5552,9 +5987,9 @@ class Log:
         Returns ApiTypes.ExportLink
         """
         return ApiClient.Request('GET', '/log/exportlinktracking', {
-                    'channelID': channelID,
                     'from': EEfrom,
                     'to': to,
+                    'channelName': channelName,
                     'fileFormat': fileFormat.value,
                     'limit': limit,
                     'offset': offset,
@@ -5863,15 +6298,15 @@ Managing and editing templates of your emails
 """
 class Template:
 
-    def Add(templateType, templateName, subject, fromEmail, fromName, templateScope = ApiTypes.TemplateScope.Private, bodyHtml = None, bodyText = None, css = None, originalTemplateID = 0):
+    def Add(name, subject, fromEmail, fromName, templateType = ApiTypes.TemplateType.RawHTML, templateScope = ApiTypes.TemplateScope.Private, bodyHtml = None, bodyText = None, css = None, originalTemplateID = 0):
         """
         Create new Template. Needs to be sent using POST method
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            ApiTypes.TemplateType templateType - 0 for API connections
-            string templateName - Name of template.
+            string name - Filename
             string subject - Default subject of email.
             string fromEmail - Default From: email address.
             string fromName - Default From: name.
+            ApiTypes.TemplateType templateType - 0 for API connections (default ApiTypes.TemplateType.RawHTML)
             ApiTypes.TemplateScope templateScope - Enum: 0 - private, 1 - public, 2 - mockup (default ApiTypes.TemplateScope.Private)
             string bodyHtml - HTML code of email (needs escaping). (default None)
             string bodyText - Text body of email. (default None)
@@ -5880,11 +6315,11 @@ class Template:
         Returns int
         """
         return ApiClient.Request('GET', '/template/add', {
-                    'templateType': templateType.value,
-                    'templateName': templateName,
+                    'name': name,
                     'subject': subject,
                     'fromEmail': fromEmail,
                     'fromName': fromName,
+                    'templateType': templateType.value,
                     'templateScope': templateScope.value,
                     'bodyHtml': bodyHtml,
                     'bodyText': bodyText,
@@ -5901,12 +6336,12 @@ class Template:
         return ApiClient.Request('GET', '/template/checkusage', {
                     'templateID': templateID})
 
-    def Copy(templateID, templateName, subject, fromEmail, fromName):
+    def Copy(templateID, name, subject, fromEmail, fromName):
         """
         Copy Selected Template
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             int templateID - ID number of template.
-            string templateName - Name of template.
+            string name - Filename
             string subject - Default subject of email.
             string fromEmail - Default From: email address.
             string fromName - Default From: name.
@@ -5914,7 +6349,7 @@ class Template:
         """
         return ApiClient.Request('GET', '/template/copy', {
                     'templateID': templateID,
-                    'templateName': templateName,
+                    'name': name,
                     'subject': subject,
                     'fromEmail': fromEmail,
                     'fromName': fromName})
@@ -5983,13 +6418,13 @@ class Template:
                     'base64Image': base64Image,
                     'templateID': templateID})
 
-    def Update(templateID, templateScope = ApiTypes.TemplateScope.Private, templateName = None, subject = None, fromEmail = None, fromName = None, bodyHtml = None, bodyText = None, css = None, removeScreenshot = True):
+    def Update(templateID, templateScope = ApiTypes.TemplateScope.Private, name = None, subject = None, fromEmail = None, fromName = None, bodyHtml = None, bodyText = None, css = None, removeScreenshot = True):
         """
         Update existing template, overwriting existing data. Needs to be sent using POST method.
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             int templateID - ID number of template.
             ApiTypes.TemplateScope templateScope - Enum: 0 - private, 1 - public, 2 - mockup (default ApiTypes.TemplateScope.Private)
-            string templateName - Name of template. (default None)
+            string name - Filename (default None)
             string subject - Default subject of email. (default None)
             string fromEmail - Default From: email address. (default None)
             string fromName - Default From: name. (default None)
@@ -6001,7 +6436,7 @@ class Template:
         return ApiClient.Request('GET', '/template/update', {
                     'templateID': templateID,
                     'templateScope': templateScope.value,
-                    'templateName': templateName,
+                    'name': name,
                     'subject': subject,
                     'fromEmail': fromEmail,
                     'fromName': fromName,
