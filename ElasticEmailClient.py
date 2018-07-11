@@ -39,28 +39,32 @@ class ApiClient:
 			result = requests.put(ApiClient.apiUri + url, params = data)
 		elif method == 'GET':
 			attach = ''
-			params = { k: v for k, v in data.items() if v != None }
-			result = requests.get(ApiClient.apiUri + url, params = params)
-			print(result.url)
-
+			params = { k: v for k, v in data.items() if v != None } 
+			result = requests.get(ApiClient.apiUri + url, params = params) 
+			print(result.url) 	
+			
 		jsonMy = result.json()
-
+		
 		if jsonMy['success'] is False:
 			return jsonMy['error']
-
+			
 		if 'data' in jsonMy.keys():
 			return jsonMy['data']
 		else:
 			return 'success'
 
+    def AddDictionaryParameter(dictionary, paramName, parameters):
+        for key in dictionary:
+            parameters[paramName + "_" + key] = dictionary[key]
+
 
 class ApiTypes:
     """
-
+    
     """
     class AccessLevel(Enum):
         """
-
+        
         """
         EENone = 0
 
@@ -563,31 +567,6 @@ class ApiTypes:
         Number of active referrals
         """
         ReferralCount = None #long
-
-
-    """
-    Account's ready to send e-mails Status
-    """
-    class AccountSendStatus(Enum):
-        """
-        Account doesn't have enough credits
-        """
-        NotEnoughCredits = 1
-
-        """
-        Account can send e-mails but only without the attachments
-        """
-        CanSendEmailsNoAttachments = 2
-
-        """
-        Account has exceeded his daily send limit
-        """
-        DailySendLimitExceeded = 3
-
-        """
-        Account is ready to send e-mails
-        """
-        CanSendEmails = 4
 
 
     """
@@ -1130,12 +1109,12 @@ class ApiTypes:
         SentCount = None #int
 
         """
-        Total emails sent.
+        Total emails failed.
         """
         FailedCount = None #int
 
         """
-        Total emails clicked
+        Total emails unsubscribed
         """
         UnsubscribedCount = None #int
 
@@ -1260,7 +1239,7 @@ class ApiTypes:
     """
     class CampaignTriggerType(Enum):
         """
-
+        
         """
         SendNow = 1
 
@@ -1290,7 +1269,7 @@ class ApiTypes:
     """
     class CertificateValidationStatus(Enum):
         """
-
+        
         """
         ErrorOccured = -2
 
@@ -1395,7 +1374,7 @@ class ApiTypes:
     """
     class ConsentTracking(Enum):
         """
-
+        
         """
         Unknown = 0
 
@@ -1415,7 +1394,7 @@ class ApiTypes:
     """
     class Contact:
         """
-
+        
         """
         ContactScore = None #int
 
@@ -1460,7 +1439,7 @@ class ApiTypes:
         TotalSent = None #int
 
         """
-        Total emails sent.
+        Total emails failed.
         """
         TotalFailed = None #int
 
@@ -1825,7 +1804,7 @@ class ApiTypes:
     """
     class ContactUnsubscribeReasonCounts:
         """
-
+        
         """
         Unknown = None #long
 
@@ -2050,7 +2029,7 @@ class ApiTypes:
     """
     class EmailJobFailedStatus:
         """
-
+        
         """
         Address = None #string
 
@@ -2095,7 +2074,7 @@ class ApiTypes:
         Failed = None #List<ApiTypes.EmailJobFailedStatus>
 
         """
-        Total emails sent.
+        Total emails failed.
         """
         FailedCount = None #int
 
@@ -2155,7 +2134,7 @@ class ApiTypes:
         Unsubscribed = None #List<string>
 
         """
-        Total emails clicked
+        Total emails unsubscribed
         """
         UnsubscribedCount = None #int
 
@@ -2315,7 +2294,7 @@ class ApiTypes:
     """
     class Export:
         """
-
+        
         """
         PublicExportID = None #Guid
 
@@ -2420,7 +2399,7 @@ class ApiTypes:
     """
     class ExportTypeCounts:
         """
-
+        
         """
         Log = None #long
 
@@ -2755,7 +2734,7 @@ class ApiTypes:
     """
     class MessageCategory(Enum):
         """
-
+        
         """
         Unknown = 0
 
@@ -2985,7 +2964,7 @@ class ApiTypes:
     """
     class QuestionType(Enum):
         """
-
+        
         """
         RadioButtons = 1
 
@@ -3385,7 +3364,7 @@ class ApiTypes:
         BouncedCount = None #long
 
         """
-        Total emails clicked
+        Total emails unsubscribed
         """
         UnsubscribedCount = None #long
 
@@ -3960,7 +3939,7 @@ class ApiTypes:
     """
     class SurveyStepType(Enum):
         """
-
+        
         """
         PageBreak = 1
 
@@ -4120,7 +4099,7 @@ class ApiTypes:
     """
     class TrackingType(Enum):
         """
-
+        
         """
         EENone = -2
 
@@ -4155,7 +4134,7 @@ class ApiTypes:
     """
     class TrackingValidationStatus(Enum):
         """
-
+        
         """
         Validated = 0
 
@@ -4310,22 +4289,26 @@ class AccessToken:
         """
         Add new AccessToken
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            string tokenName -
-            ApiTypes.AccessLevel accessLevel -
+            string tokenName - 
+            ApiTypes.AccessLevel accessLevel - 
         Returns string
         """
-        return ApiClient.Request('GET', '/accesstoken/add', {
+        parameters = { 
                     'tokenName': tokenName,
-                    'accessLevel': accessLevel.value})
+                    'accessLevel': accessLevel.value}
+
+        return ApiClient.Request('GET', '/accesstoken/add', parameters)
 
     def Delete(tokenName):
         """
         Permanently delete AccessToken.
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            string tokenName -
+            string tokenName - 
         """
-        return ApiClient.Request('GET', '/accesstoken/delete', {
-                    'tokenName': tokenName})
+        parameters = { 
+                    'tokenName': tokenName}
+
+        return ApiClient.Request('GET', '/accesstoken/delete', parameters)
 
     def List():
         """
@@ -4333,20 +4316,23 @@ class AccessToken:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         Returns List<ApiTypes.AccessToken>
         """
-        return ApiClient.Request('GET', '/accesstoken/list')
+
+        return ApiClient.Request('GET', '/accesstoken/list', parameters)
 
     def Update(tokenName, accessLevel, tokenNameNew = None):
         """
         Edit AccessToken.
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            string tokenName -
-            ApiTypes.AccessLevel accessLevel -
+            string tokenName - 
+            ApiTypes.AccessLevel accessLevel - 
             string tokenNameNew -  (default None)
         """
-        return ApiClient.Request('GET', '/accesstoken/update', {
+        parameters = { 
                     'tokenName': tokenName,
                     'accessLevel': accessLevel.value,
-                    'tokenNameNew': tokenNameNew})
+                    'tokenNameNew': tokenNameNew}
+
+        return ApiClient.Request('GET', '/accesstoken/update', parameters)
 
 
 """ 
@@ -4375,7 +4361,7 @@ class Account:
             int? dailySendLimit - Amount of emails account can send daily (default None)
         Returns string
         """
-        return ApiClient.Request('GET', '/account/addsubaccount', {
+        parameters = { 
                     'email': email,
                     'password': password,
                     'confirmPassword': confirmPassword,
@@ -4390,7 +4376,9 @@ class Account:
                     'enableContactFeatures': enableContactFeatures,
                     'poolName': poolName,
                     'emailSizeLimit': emailSizeLimit,
-                    'dailySendLimit': dailySendLimit})
+                    'dailySendLimit': dailySendLimit}
+
+        return ApiClient.Request('GET', '/account/addsubaccount', parameters)
 
     def AddSubAccountCredits(credits, notes, creditType = ApiTypes.CreditType.Email, subAccountEmail = None, publicAccountID = None):
         """
@@ -4402,12 +4390,14 @@ class Account:
             string subAccountEmail - Email address of sub-account (default None)
             string publicAccountID - Public key of sub-account to add credits to. Use subAccountEmail or publicAccountID not both. (default None)
         """
-        return ApiClient.Request('GET', '/account/addsubaccountcredits', {
+        parameters = { 
                     'credits': credits,
                     'notes': notes,
                     'creditType': creditType.value,
                     'subAccountEmail': subAccountEmail,
-                    'publicAccountID': publicAccountID})
+                    'publicAccountID': publicAccountID}
+
+        return ApiClient.Request('GET', '/account/addsubaccountcredits', parameters)
 
     def ChangeEmail(newEmail, confirmEmail, sourceUrl = "https://elasticemail.com/account/"):
         """
@@ -4418,46 +4408,40 @@ class Account:
             string sourceUrl - URL from which request was sent. (default "https://elasticemail.com/account/")
         Returns string
         """
-        return ApiClient.Request('GET', '/account/changeemail', {
+        parameters = { 
                     'newEmail': newEmail,
                     'confirmEmail': confirmEmail,
-                    'sourceUrl': sourceUrl})
+                    'sourceUrl': sourceUrl}
 
-    def ChangePassword(currentPassword, newPassword, confirmPassword):
+        return ApiClient.Request('GET', '/account/changeemail', parameters)
+
+    def ChangePassword(newPassword, confirmPassword, currentPassword = None):
         """
         Create new password for your account. Password needs to be at least 6 characters long.
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            string currentPassword - Current password.
             string newPassword - New password for account.
             string confirmPassword - Repeat new password.
+            string currentPassword - Current password. (default None)
         """
-        return ApiClient.Request('GET', '/account/changepassword', {
-                    'currentPassword': currentPassword,
+        parameters = { 
                     'newPassword': newPassword,
-                    'confirmPassword': confirmPassword})
+                    'confirmPassword': confirmPassword,
+                    'currentPassword': currentPassword}
 
-    def DeleteSubAccount(notify = True, subAccountEmail = None, publicAccountID = None, deleteDomains = True):
+        return ApiClient.Request('GET', '/account/changepassword', parameters)
+
+    def DeleteSubAccount(subAccountEmail = None, publicAccountID = None):
         """
         Deletes specified Subaccount
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            bool notify - True, if you want to send an email notification. Otherwise, false (default True)
             string subAccountEmail - Email address of sub-account (default None)
             string publicAccountID - Public key of sub-account to delete. Use subAccountEmail or publicAccountID not both. (default None)
-            bool deleteDomains -  (default True)
         """
-        return ApiClient.Request('GET', '/account/deletesubaccount', {
-                    'notify': notify,
+        parameters = { 
                     'subAccountEmail': subAccountEmail,
-                    'publicAccountID': publicAccountID,
-                    'deleteDomains': deleteDomains})
+                    'publicAccountID': publicAccountID}
 
-    def GetAccountAbilityToSendEmail():
-        """
-        Validate account's ability to send e-mail
-            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-        Returns ApiTypes.AccountSendStatus
-        """
-        return ApiClient.Request('GET', '/account/getaccountabilitytosendemail')
+        return ApiClient.Request('GET', '/account/deletesubaccount', parameters)
 
     def GetSubAccountApiKey(subAccountEmail = None, publicAccountID = None):
         """
@@ -4467,9 +4451,11 @@ class Account:
             string publicAccountID - Public key of sub-account to retrieve sub-account API Key. Use subAccountEmail or publicAccountID not both. (default None)
         Returns string
         """
-        return ApiClient.Request('GET', '/account/getsubaccountapikey', {
+        parameters = { 
                     'subAccountEmail': subAccountEmail,
-                    'publicAccountID': publicAccountID})
+                    'publicAccountID': publicAccountID}
+
+        return ApiClient.Request('GET', '/account/getsubaccountapikey', parameters)
 
     def GetSubAccountList(limit = 0, offset = 0):
         """
@@ -4479,9 +4465,11 @@ class Account:
             int offset - How many items should be loaded ahead. (default 0)
         Returns List<ApiTypes.SubAccount>
         """
-        return ApiClient.Request('GET', '/account/getsubaccountlist', {
+        parameters = { 
                     'limit': limit,
-                    'offset': offset})
+                    'offset': offset}
+
+        return ApiClient.Request('GET', '/account/getsubaccountlist', parameters)
 
     def Load():
         """
@@ -4489,7 +4477,8 @@ class Account:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         Returns ApiTypes.Account
         """
-        return ApiClient.Request('GET', '/account/load')
+
+        return ApiClient.Request('GET', '/account/load', parameters)
 
     def LoadAdvancedOptions():
         """
@@ -4497,7 +4486,8 @@ class Account:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         Returns ApiTypes.AdvancedOptions
         """
-        return ApiClient.Request('GET', '/account/loadadvancedoptions')
+
+        return ApiClient.Request('GET', '/account/loadadvancedoptions', parameters)
 
     def LoadEmailCreditsHistory():
         """
@@ -4505,7 +4495,8 @@ class Account:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         Returns List<ApiTypes.EmailCredits>
         """
-        return ApiClient.Request('GET', '/account/loademailcreditshistory')
+
+        return ApiClient.Request('GET', '/account/loademailcreditshistory', parameters)
 
     def LoadInfo():
         """
@@ -4513,7 +4504,8 @@ class Account:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         Returns ApiTypes.Account
         """
-        return ApiClient.Request('GET', '/account/loadinfo')
+
+        return ApiClient.Request('GET', '/account/loadinfo', parameters)
 
     def LoadLitmusCreditsHistory():
         """
@@ -4521,7 +4513,8 @@ class Account:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         Returns List<ApiTypes.LitmusCredits>
         """
-        return ApiClient.Request('GET', '/account/loadlitmuscreditshistory')
+
+        return ApiClient.Request('GET', '/account/loadlitmuscreditshistory', parameters)
 
     def LoadNotificationQueue():
         """
@@ -4529,7 +4522,8 @@ class Account:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         Returns List<ApiTypes.NotificationQueue>
         """
-        return ApiClient.Request('GET', '/account/loadnotificationqueue')
+
+        return ApiClient.Request('GET', '/account/loadnotificationqueue', parameters)
 
     def LoadPaymentHistory(limit, offset, fromDate, toDate):
         """
@@ -4541,11 +4535,13 @@ class Account:
             DateTime toDate - Ending date for search in YYYY-MM-DDThh:mm:ss format.
         Returns List<ApiTypes.Payment>
         """
-        return ApiClient.Request('GET', '/account/loadpaymenthistory', {
+        parameters = { 
                     'limit': limit,
                     'offset': offset,
                     'fromDate': fromDate,
-                    'toDate': toDate})
+                    'toDate': toDate}
+
+        return ApiClient.Request('GET', '/account/loadpaymenthistory', parameters)
 
     def LoadPayoutHistory():
         """
@@ -4553,7 +4549,8 @@ class Account:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         Returns List<ApiTypes.Payment>
         """
-        return ApiClient.Request('GET', '/account/loadpayouthistory')
+
+        return ApiClient.Request('GET', '/account/loadpayouthistory', parameters)
 
     def LoadReferralDetails():
         """
@@ -4561,7 +4558,8 @@ class Account:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         Returns ApiTypes.Referral
         """
-        return ApiClient.Request('GET', '/account/loadreferraldetails')
+
+        return ApiClient.Request('GET', '/account/loadreferraldetails', parameters)
 
     def LoadReputationHistory(limit = 20, offset = 0):
         """
@@ -4571,9 +4569,11 @@ class Account:
             int offset - How many items should be loaded ahead. (default 0)
         Returns List<ApiTypes.ReputationHistory>
         """
-        return ApiClient.Request('GET', '/account/loadreputationhistory', {
+        parameters = { 
                     'limit': limit,
-                    'offset': offset})
+                    'offset': offset}
+
+        return ApiClient.Request('GET', '/account/loadreputationhistory', parameters)
 
     def LoadReputationImpact():
         """
@@ -4581,7 +4581,8 @@ class Account:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         Returns ApiTypes.ReputationDetail
         """
-        return ApiClient.Request('GET', '/account/loadreputationimpact')
+
+        return ApiClient.Request('GET', '/account/loadreputationimpact', parameters)
 
     def LoadSpamCheck(limit = 20, offset = 0):
         """
@@ -4591,9 +4592,11 @@ class Account:
             int offset - How many items should be loaded ahead. (default 0)
         Returns List<ApiTypes.SpamCheck>
         """
-        return ApiClient.Request('GET', '/account/loadspamcheck', {
+        parameters = { 
                     'limit': limit,
-                    'offset': offset})
+                    'offset': offset}
+
+        return ApiClient.Request('GET', '/account/loadspamcheck', parameters)
 
     def LoadSubAccountsEmailCreditsHistory(subAccountEmail = None, publicAccountID = None):
         """
@@ -4603,9 +4606,11 @@ class Account:
             string publicAccountID - Public key of sub-account to list history for. Use subAccountEmail or publicAccountID not both. (default None)
         Returns List<ApiTypes.EmailCredits>
         """
-        return ApiClient.Request('GET', '/account/loadsubaccountsemailcreditshistory', {
+        parameters = { 
                     'subAccountEmail': subAccountEmail,
-                    'publicAccountID': publicAccountID})
+                    'publicAccountID': publicAccountID}
+
+        return ApiClient.Request('GET', '/account/loadsubaccountsemailcreditshistory', parameters)
 
     def LoadSubAccountSettings(subAccountEmail = None, publicAccountID = None):
         """
@@ -4615,9 +4620,11 @@ class Account:
             string publicAccountID - Public key of sub-account to load settings for. Use subAccountEmail or publicAccountID not both. (default None)
         Returns ApiTypes.SubAccountSettings
         """
-        return ApiClient.Request('GET', '/account/loadsubaccountsettings', {
+        parameters = { 
                     'subAccountEmail': subAccountEmail,
-                    'publicAccountID': publicAccountID})
+                    'publicAccountID': publicAccountID}
+
+        return ApiClient.Request('GET', '/account/loadsubaccountsettings', parameters)
 
     def LoadSubAccountsLitmusCreditsHistory(subAccountEmail = None, publicAccountID = None):
         """
@@ -4627,9 +4634,11 @@ class Account:
             string publicAccountID - Public key of sub-account to list history for. Use subAccountEmail or publicAccountID not both. (default None)
         Returns List<ApiTypes.LitmusCredits>
         """
-        return ApiClient.Request('GET', '/account/loadsubaccountslitmuscreditshistory', {
+        parameters = { 
                     'subAccountEmail': subAccountEmail,
-                    'publicAccountID': publicAccountID})
+                    'publicAccountID': publicAccountID}
+
+        return ApiClient.Request('GET', '/account/loadsubaccountslitmuscreditshistory', parameters)
 
     def LoadUsage(EEfrom, to):
         """
@@ -4639,9 +4648,11 @@ class Account:
             DateTime to - Ending date for search in YYYY-MM-DDThh:mm:ss format.
         Returns List<ApiTypes.Usage>
         """
-        return ApiClient.Request('GET', '/account/loadusage', {
+        parameters = { 
                     'from': EEfrom,
-                    'to': to})
+                    'to': to}
+
+        return ApiClient.Request('GET', '/account/loadusage', parameters)
 
     def Overview():
         """
@@ -4649,7 +4660,8 @@ class Account:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         Returns ApiTypes.AccountOverview
         """
-        return ApiClient.Request('GET', '/account/overview')
+
+        return ApiClient.Request('GET', '/account/overview', parameters)
 
     def ProfileOverview():
         """
@@ -4657,7 +4669,8 @@ class Account:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         Returns ApiTypes.Profile
         """
-        return ApiClient.Request('GET', '/account/profileoverview')
+
+        return ApiClient.Request('GET', '/account/profileoverview', parameters)
 
     def RemoveSubAccountCredits(creditType, notes, subAccountEmail = None, publicAccountID = None, credits = None, removeAll = False):
         """
@@ -4670,13 +4683,15 @@ class Account:
             int? credits - Amount of credits to remove (default None)
             bool removeAll - Remove all credits of this type from sub-account (overrides credits if provided) (default False)
         """
-        return ApiClient.Request('GET', '/account/removesubaccountcredits', {
+        parameters = { 
                     'creditType': creditType.value,
                     'notes': notes,
                     'subAccountEmail': subAccountEmail,
                     'publicAccountID': publicAccountID,
                     'credits': credits,
-                    'removeAll': removeAll})
+                    'removeAll': removeAll}
+
+        return ApiClient.Request('GET', '/account/removesubaccountcredits', parameters)
 
     def RequestNewApiKey():
         """
@@ -4684,14 +4699,16 @@ class Account:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         Returns string
         """
-        return ApiClient.Request('GET', '/account/requestnewapikey')
+
+        return ApiClient.Request('GET', '/account/requestnewapikey', parameters)
 
     def RequestPremiumSupport():
         """
         Request premium support for your account
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         """
-        return ApiClient.Request('GET', '/account/requestpremiumsupport')
+
+        return ApiClient.Request('GET', '/account/requestpremiumsupport', parameters)
 
     def RequestPrivateIP(count, notes):
         """
@@ -4700,9 +4717,11 @@ class Account:
             int count - Number of items.
             string notes - Free form field of notes
         """
-        return ApiClient.Request('GET', '/account/requestprivateip', {
+        parameters = { 
                     'count': count,
-                    'notes': notes})
+                    'notes': notes}
+
+        return ApiClient.Request('GET', '/account/requestprivateip', parameters)
 
     def UpdateAdvancedOptions(enableClickTracking = None, enableLinkClickTracking = None, manageSubscriptions = None, manageSubscribedOnly = None, transactionalOnUnsubscribe = None, skipListUnsubscribe = None, autoTextFromHtml = None, allowCustomHeaders = None, bccEmail = None, contentTransferEncoding = None, emailNotificationForError = None, emailNotificationEmail = None, webNotificationUrl = None, webNotificationNotifyOncePerEmail = None, webNotificationForSent = None, webNotificationForOpened = None, webNotificationForClicked = None, webNotificationForUnsubscribed = None, webNotificationForAbuseReport = None, webNotificationForError = None, hubCallBackUrl = "", inboundDomain = None, inboundContactsOnly = None, lowCreditNotification = None, enableUITooltips = None, enableContactFeatures = None, notificationsEmails = None, unsubscribeNotificationsEmails = None, logoUrl = None, enableTemplateScripting = True, staleContactScore = None, staleContactInactiveDays = None, deliveryReason = None, tutorialsEnabled = None, enableOpenTracking = None, consentTrackingOnUnsubscribe = None):
         """
@@ -4746,7 +4765,7 @@ class Account:
             bool? consentTrackingOnUnsubscribe -  (default None)
         Returns ApiTypes.AdvancedOptions
         """
-        return ApiClient.Request('GET', '/account/updateadvancedoptions', {
+        parameters = { 
                     'enableClickTracking': enableClickTracking,
                     'enableLinkClickTracking': enableLinkClickTracking,
                     'manageSubscriptions': manageSubscriptions,
@@ -4782,7 +4801,9 @@ class Account:
                     'deliveryReason': deliveryReason,
                     'tutorialsEnabled': tutorialsEnabled,
                     'enableOpenTracking': enableOpenTracking,
-                    'consentTrackingOnUnsubscribe': consentTrackingOnUnsubscribe})
+                    'consentTrackingOnUnsubscribe': consentTrackingOnUnsubscribe}
+
+        return ApiClient.Request('GET', '/account/updateadvancedoptions', parameters)
 
     def UpdateCustomBranding(enablePrivateBranding = False, logoUrl = None, supportLink = None, privateBrandingUrl = None, smtpAddress = None, smtpAlternative = None, paymentUrl = None):
         """
@@ -4796,14 +4817,16 @@ class Account:
             string smtpAlternative - Address of alternative SMTP server. (default None)
             string paymentUrl - URL for making payments. (default None)
         """
-        return ApiClient.Request('GET', '/account/updatecustombranding', {
+        parameters = { 
                     'enablePrivateBranding': enablePrivateBranding,
                     'logoUrl': logoUrl,
                     'supportLink': supportLink,
                     'privateBrandingUrl': privateBrandingUrl,
                     'smtpAddress': smtpAddress,
                     'smtpAlternative': smtpAlternative,
-                    'paymentUrl': paymentUrl})
+                    'paymentUrl': paymentUrl}
+
+        return ApiClient.Request('GET', '/account/updatecustombranding', parameters)
 
     def UpdateHttpNotification(url, notifyOncePerEmail = False, settings = None):
         """
@@ -4813,10 +4836,12 @@ class Account:
             bool notifyOncePerEmail - True, if you want to receive notifications for each type only once per email. Otherwise, false (default False)
             string settings - Http notification settings serialized to JSON  (default None)
         """
-        return ApiClient.Request('GET', '/account/updatehttpnotification', {
+        parameters = { 
                     'url': url,
                     'notifyOncePerEmail': notifyOncePerEmail,
-                    'settings': settings})
+                    'settings': settings}
+
+        return ApiClient.Request('GET', '/account/updatehttpnotification', parameters)
 
     def UpdateProfile(firstName, lastName, address1, city, state, zip, countryID, marketingConsent = None, address2 = None, company = None, website = None, logoUrl = None, taxCode = None, phone = None):
         """
@@ -4837,7 +4862,7 @@ class Account:
             string taxCode - Code used for tax purposes. (default None)
             string phone - Phone number (default None)
         """
-        return ApiClient.Request('GET', '/account/updateprofile', {
+        parameters = { 
                     'firstName': firstName,
                     'lastName': lastName,
                     'address1': address1,
@@ -4851,7 +4876,9 @@ class Account:
                     'website': website,
                     'logoUrl': logoUrl,
                     'taxCode': taxCode,
-                    'phone': phone})
+                    'phone': phone}
+
+        return ApiClient.Request('GET', '/account/updateprofile', parameters)
 
     def UpdateSubAccountSettings(requiresEmailCredits = False, monthlyRefillCredits = 0, requiresLitmusCredits = False, enableLitmusTest = False, dailySendLimit = None, emailSizeLimit = 10, enablePrivateIPRequest = False, maxContacts = 0, subAccountEmail = None, publicAccountID = None, sendingPermission = None, enableContactFeatures = None, poolName = None):
         """
@@ -4871,7 +4898,7 @@ class Account:
             bool? enableContactFeatures - True, if you want to use Contact Delivery Tools.  Otherwise, false (default None)
             string poolName - Name of your custom IP Pool to be used in the sending process (default None)
         """
-        return ApiClient.Request('GET', '/account/updatesubaccountsettings', {
+        parameters = { 
                     'requiresEmailCredits': requiresEmailCredits,
                     'monthlyRefillCredits': monthlyRefillCredits,
                     'requiresLitmusCredits': requiresLitmusCredits,
@@ -4884,7 +4911,9 @@ class Account:
                     'publicAccountID': publicAccountID,
                     'sendingPermission': sendingPermission,
                     'enableContactFeatures': enableContactFeatures,
-                    'poolName': poolName})
+                    'poolName': poolName}
+
+        return ApiClient.Request('GET', '/account/updatesubaccountsettings', parameters)
 
 
 """ 
@@ -4899,8 +4928,10 @@ class Campaign:
             ApiTypes.Campaign campaign - Json representation of a campaign
         Returns int
         """
-        return ApiClient.Request('GET', '/campaign/add', {
-                    'campaign': campaign})
+        parameters = { 
+                    'campaign': campaign}
+
+        return ApiClient.Request('GET', '/campaign/add', parameters)
 
     def Copy(channelID):
         """
@@ -4909,8 +4940,10 @@ class Campaign:
             int channelID - ID number of selected Channel.
         Returns int
         """
-        return ApiClient.Request('GET', '/campaign/copy', {
-                    'channelID': channelID})
+        parameters = { 
+                    'channelID': channelID}
+
+        return ApiClient.Request('GET', '/campaign/copy', parameters)
 
     def Delete(channelID):
         """
@@ -4918,8 +4951,10 @@ class Campaign:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             int channelID - ID number of selected Channel.
         """
-        return ApiClient.Request('GET', '/campaign/delete', {
-                    'channelID': channelID})
+        parameters = { 
+                    'channelID': channelID}
+
+        return ApiClient.Request('GET', '/campaign/delete', parameters)
 
     def Export(channelIDs = {}, fileFormat = ApiTypes.ExportFileFormats.Csv, compressionFormat = ApiTypes.CompressionFormat.EENone, fileName = None):
         """
@@ -4931,11 +4966,13 @@ class Campaign:
             string fileName - Name of your file. (default None)
         Returns ApiTypes.ExportLink
         """
-        return ApiClient.Request('GET', '/campaign/export', {
+        parameters = { 
                     'channelIDs': ";".join(map(str, channelIDs)),
                     'fileFormat': fileFormat.value,
                     'compressionFormat': compressionFormat.value,
-                    'fileName': fileName})
+                    'fileName': fileName}
+
+        return ApiClient.Request('GET', '/campaign/export', parameters)
 
     def List(search = None, offset = 0, limit = 0):
         """
@@ -4946,10 +4983,12 @@ class Campaign:
             int limit - Maximum of loaded items. (default 0)
         Returns List<ApiTypes.CampaignChannel>
         """
-        return ApiClient.Request('GET', '/campaign/list', {
+        parameters = { 
                     'search': search,
                     'offset': offset,
-                    'limit': limit})
+                    'limit': limit}
+
+        return ApiClient.Request('GET', '/campaign/list', parameters)
 
     def Update(campaign):
         """
@@ -4958,8 +4997,10 @@ class Campaign:
             ApiTypes.Campaign campaign - Json representation of a campaign
         Returns int
         """
-        return ApiClient.Request('GET', '/campaign/update', {
-                    'campaign': campaign})
+        parameters = { 
+                    'campaign': campaign}
+
+        return ApiClient.Request('GET', '/campaign/update', parameters)
 
 
 """ 
@@ -4974,8 +5015,10 @@ class Channel:
             string name - Descriptive name of the channel
         Returns string
         """
-        return ApiClient.Request('GET', '/channel/add', {
-                    'name': name})
+        parameters = { 
+                    'name': name}
+
+        return ApiClient.Request('GET', '/channel/add', parameters)
 
     def Delete(name):
         """
@@ -4983,8 +5026,10 @@ class Channel:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             string name - The name of the channel to delete.
         """
-        return ApiClient.Request('GET', '/channel/delete', {
-                    'name': name})
+        parameters = { 
+                    'name': name}
+
+        return ApiClient.Request('GET', '/channel/delete', parameters)
 
     def ExportCsv(channelNames, compressionFormat = ApiTypes.CompressionFormat.EENone, fileName = None):
         """
@@ -4995,10 +5040,12 @@ class Channel:
             string fileName - Name of your file. (default None)
         Returns File
         """
-        return ApiClient.Request('GET', '/channel/exportcsv', {
+        parameters = { 
                     'channelNames': ";".join(map(str, channelNames)),
                     'compressionFormat': compressionFormat.value,
-                    'fileName': fileName})
+                    'fileName': fileName}
+
+        return ApiClient.Request('GET', '/channel/exportcsv', parameters)
 
     def ExportJson(channelNames, compressionFormat = ApiTypes.CompressionFormat.EENone, fileName = None):
         """
@@ -5009,10 +5056,12 @@ class Channel:
             string fileName - Name of your file. (default None)
         Returns File
         """
-        return ApiClient.Request('GET', '/channel/exportjson', {
+        parameters = { 
                     'channelNames': ";".join(map(str, channelNames)),
                     'compressionFormat': compressionFormat.value,
-                    'fileName': fileName})
+                    'fileName': fileName}
+
+        return ApiClient.Request('GET', '/channel/exportjson', parameters)
 
     def ExportXml(channelNames, compressionFormat = ApiTypes.CompressionFormat.EENone, fileName = None):
         """
@@ -5023,10 +5072,12 @@ class Channel:
             string fileName - Name of your file. (default None)
         Returns File
         """
-        return ApiClient.Request('GET', '/channel/exportxml', {
+        parameters = { 
                     'channelNames': ";".join(map(str, channelNames)),
                     'compressionFormat': compressionFormat.value,
-                    'fileName': fileName})
+                    'fileName': fileName}
+
+        return ApiClient.Request('GET', '/channel/exportxml', parameters)
 
     def List():
         """
@@ -5034,7 +5085,8 @@ class Channel:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         Returns List<ApiTypes.Channel>
         """
-        return ApiClient.Request('GET', '/channel/list')
+
+        return ApiClient.Request('GET', '/channel/list', parameters)
 
     def Update(name, newName):
         """
@@ -5044,9 +5096,11 @@ class Channel:
             string newName - The new name for the channel.
         Returns string
         """
-        return ApiClient.Request('GET', '/channel/update', {
+        parameters = { 
                     'name': name,
-                    'newName': newName})
+                    'newName': newName}
+
+        return ApiClient.Request('GET', '/channel/update', parameters)
 
 
 """ 
@@ -5077,7 +5131,7 @@ class Contact:
             ApiTypes.ConsentTracking consentTracking -  (default ApiTypes.ConsentTracking.Unknown)
         Returns string
         """
-        return ApiClient.Request('GET', '/contact/add', {
+        parameters = { 
                     'publicAccountID': publicAccountID,
                     'email': email,
                     'publicListID': ";".join(map(str, publicListID)),
@@ -5092,10 +5146,12 @@ class Contact:
                     'sendActivation': sendActivation,
                     'consentDate': consentDate,
                     'consentIP': consentIP,
-                    'field': field,
                     'notifyEmail': notifyEmail,
                     'alreadyActiveUrl': alreadyActiveUrl,
-                    'consentTracking': consentTracking.value})
+                    'consentTracking': consentTracking.value}
+        ApiClient.AddDictionaryParameter(field, "field", parameters)
+
+        return ApiClient.Request('GET', '/contact/add', parameters)
 
     def AddBlocked(email, status):
         """
@@ -5104,9 +5160,11 @@ class Contact:
             string email - Proper email address.
             ApiTypes.ContactStatus status - Name of status: Active, Engaged, Inactive, Abuse, Bounced, Unsubscribed.
         """
-        return ApiClient.Request('GET', '/contact/addblocked', {
+        parameters = { 
                     'email': email,
-                    'status': status.value})
+                    'status': status.value}
+
+        return ApiClient.Request('GET', '/contact/addblocked', parameters)
 
     def ChangeProperty(email, name, value):
         """
@@ -5116,10 +5174,12 @@ class Contact:
             string name - Name of the contact property you want to change.
             string value - Value you would like to change the contact property to.
         """
-        return ApiClient.Request('GET', '/contact/changeproperty', {
+        parameters = { 
                     'email': email,
                     'name': name,
-                    'value': value})
+                    'value': value}
+
+        return ApiClient.Request('GET', '/contact/changeproperty', parameters)
 
     def ChangeStatus(status, rule = None, emails = {}):
         """
@@ -5129,10 +5189,12 @@ class Contact:
             string rule - Query used for filtering. (default None)
             IEnumerable<string> emails - Comma delimited list of contact emails (default None)
         """
-        return ApiClient.Request('GET', '/contact/changestatus', {
+        parameters = { 
                     'status': status.value,
                     'rule': rule,
-                    'emails': ";".join(map(str, emails))})
+                    'emails': ";".join(map(str, emails))}
+
+        return ApiClient.Request('GET', '/contact/changestatus', parameters)
 
     def CountByStatus(rule = None, allContacts = False):
         """
@@ -5142,9 +5204,11 @@ class Contact:
             bool allContacts - True: Include every Contact in your Account. Otherwise, false (default False)
         Returns ApiTypes.ContactStatusCounts
         """
-        return ApiClient.Request('GET', '/contact/countbystatus', {
+        parameters = { 
                     'rule': rule,
-                    'allContacts': allContacts})
+                    'allContacts': allContacts}
+
+        return ApiClient.Request('GET', '/contact/countbystatus', parameters)
 
     def CountByUnsubscribeReason(EEfrom = None, to = None):
         """
@@ -5154,9 +5218,11 @@ class Contact:
             DateTime? to - Ending date for search in YYYY-MM-DDThh:mm:ss format. (default None)
         Returns ApiTypes.ContactUnsubscribeReasonCounts
         """
-        return ApiClient.Request('GET', '/contact/countbyunsubscribereason', {
+        parameters = { 
                     'from': EEfrom,
-                    'to': to})
+                    'to': to}
+
+        return ApiClient.Request('GET', '/contact/countbyunsubscribereason', parameters)
 
     def Delete(rule = None, emails = {}):
         """
@@ -5165,9 +5231,11 @@ class Contact:
             string rule - Query used for filtering. (default None)
             IEnumerable<string> emails - Comma delimited list of contact emails (default None)
         """
-        return ApiClient.Request('GET', '/contact/delete', {
+        parameters = { 
                     'rule': rule,
-                    'emails': ";".join(map(str, emails))})
+                    'emails': ";".join(map(str, emails))}
+
+        return ApiClient.Request('GET', '/contact/delete', parameters)
 
     def Export(fileFormat = ApiTypes.ExportFileFormats.Csv, rule = None, emails = {}, compressionFormat = ApiTypes.CompressionFormat.EENone, fileName = None):
         """
@@ -5180,12 +5248,14 @@ class Contact:
             string fileName - Name of your file. (default None)
         Returns ApiTypes.ExportLink
         """
-        return ApiClient.Request('GET', '/contact/export', {
+        parameters = { 
                     'fileFormat': fileFormat.value,
                     'rule': rule,
                     'emails': ";".join(map(str, emails)),
                     'compressionFormat': compressionFormat.value,
-                    'fileName': fileName})
+                    'fileName': fileName}
+
+        return ApiClient.Request('GET', '/contact/export', parameters)
 
     def ExportUnsubscribeReasonCount(EEfrom = None, to = None, fileFormat = ApiTypes.ExportFileFormats.Csv, compressionFormat = ApiTypes.CompressionFormat.EENone, fileName = None):
         """
@@ -5198,12 +5268,14 @@ class Contact:
             string fileName - Name of your file. (default None)
         Returns ApiTypes.ExportLink
         """
-        return ApiClient.Request('GET', '/contact/exportunsubscribereasoncount', {
+        parameters = { 
                     'from': EEfrom,
                     'to': to,
                     'fileFormat': fileFormat.value,
                     'compressionFormat': compressionFormat.value,
-                    'fileName': fileName})
+                    'fileName': fileName}
+
+        return ApiClient.Request('GET', '/contact/exportunsubscribereasoncount', parameters)
 
     def FindContact(email):
         """
@@ -5212,8 +5284,10 @@ class Contact:
             string email - Proper email address.
         Returns ApiTypes.ContactCollection
         """
-        return ApiClient.Request('GET', '/contact/findcontact', {
-                    'email': email})
+        parameters = { 
+                    'email': email}
+
+        return ApiClient.Request('GET', '/contact/findcontact', parameters)
 
     def GetContactsByList(listName, limit = 20, offset = 0):
         """
@@ -5224,10 +5298,12 @@ class Contact:
             int offset - How many items should be loaded ahead. (default 0)
         Returns List<ApiTypes.Contact>
         """
-        return ApiClient.Request('GET', '/contact/getcontactsbylist', {
+        parameters = { 
                     'listName': listName,
                     'limit': limit,
-                    'offset': offset})
+                    'offset': offset}
+
+        return ApiClient.Request('GET', '/contact/getcontactsbylist', parameters)
 
     def GetContactsBySegment(segmentName, limit = 20, offset = 0):
         """
@@ -5238,10 +5314,12 @@ class Contact:
             int offset - How many items should be loaded ahead. (default 0)
         Returns List<ApiTypes.Contact>
         """
-        return ApiClient.Request('GET', '/contact/getcontactsbysegment', {
+        parameters = { 
                     'segmentName': segmentName,
                     'limit': limit,
-                    'offset': offset})
+                    'offset': offset}
+
+        return ApiClient.Request('GET', '/contact/getcontactsbysegment', parameters)
 
     def List(rule = None, limit = 20, offset = 0):
         """
@@ -5252,10 +5330,12 @@ class Contact:
             int offset - How many items should be loaded ahead. (default 0)
         Returns List<ApiTypes.Contact>
         """
-        return ApiClient.Request('GET', '/contact/list', {
+        parameters = { 
                     'rule': rule,
                     'limit': limit,
-                    'offset': offset})
+                    'offset': offset}
+
+        return ApiClient.Request('GET', '/contact/list', parameters)
 
     def LoadBlocked(statuses, search = None, limit = 0, offset = 0):
         """
@@ -5267,11 +5347,13 @@ class Contact:
             int offset - How many items should be loaded ahead. (default 0)
         Returns List<ApiTypes.BlockedContact>
         """
-        return ApiClient.Request('GET', '/contact/loadblocked', {
+        parameters = { 
                     'statuses': ";".join(map(str, statuses)),
                     'search': search,
                     'limit': limit,
-                    'offset': offset})
+                    'offset': offset}
+
+        return ApiClient.Request('GET', '/contact/loadblocked', parameters)
 
     def LoadContact(email):
         """
@@ -5280,8 +5362,10 @@ class Contact:
             string email - Proper email address.
         Returns ApiTypes.Contact
         """
-        return ApiClient.Request('GET', '/contact/loadcontact', {
-                    'email': email})
+        parameters = { 
+                    'email': email}
+
+        return ApiClient.Request('GET', '/contact/loadcontact', parameters)
 
     def LoadHistory(email, limit = 0, offset = 0):
         """
@@ -5292,10 +5376,12 @@ class Contact:
             int offset - How many items should be loaded ahead. (default 0)
         Returns List<ApiTypes.ContactHistory>
         """
-        return ApiClient.Request('GET', '/contact/loadhistory', {
+        parameters = { 
                     'email': email,
                     'limit': limit,
-                    'offset': offset})
+                    'offset': offset}
+
+        return ApiClient.Request('GET', '/contact/loadhistory', parameters)
 
     def QuickAdd(emails, firstName = None, lastName = None, publicListID = None, listName = None, status = ApiTypes.ContactStatus.Active, notes = None, consentDate = None, consentIP = None, field = {}, notifyEmail = None, consentTracking = ApiTypes.ConsentTracking.Unknown):
         """
@@ -5314,7 +5400,7 @@ class Contact:
             string notifyEmail - Emails, separated by semicolon, to which the notification about contact subscribing should be sent to (default None)
             ApiTypes.ConsentTracking consentTracking -  (default ApiTypes.ConsentTracking.Unknown)
         """
-        return ApiClient.Request('GET', '/contact/quickadd', {
+        parameters = { 
                     'emails': ";".join(map(str, emails)),
                     'firstName': firstName,
                     'lastName': lastName,
@@ -5324,9 +5410,11 @@ class Contact:
                     'notes': notes,
                     'consentDate': consentDate,
                     'consentIP': consentIP,
-                    'field': field,
                     'notifyEmail': notifyEmail,
-                    'consentTracking': consentTracking.value})
+                    'consentTracking': consentTracking.value}
+        ApiClient.AddDictionaryParameter(field, "field", parameters)
+
+        return ApiClient.Request('GET', '/contact/quickadd', parameters)
 
     def Subscribe(publicAccountID):
         """
@@ -5334,8 +5422,10 @@ class Contact:
             string publicAccountID - Public key for limited access to your account such as contact/add so you can use it safely on public websites.
         Returns string
         """
-        return ApiClient.Request('GET', '/contact/subscribe', {
-                    'publicAccountID': publicAccountID})
+        parameters = { 
+                    'publicAccountID': publicAccountID}
+
+        return ApiClient.Request('GET', '/contact/subscribe', parameters)
 
     def Update(email, firstName = None, lastName = None, clearRestOfFields = True, field = {}, customFields = None):
         """
@@ -5349,13 +5439,15 @@ class Contact:
             string customFields - Custom contact field like firstname, lastname, city etc. JSON serialized text like { "city":"london" }  (default None)
         Returns ApiTypes.Contact
         """
-        return ApiClient.Request('GET', '/contact/update', {
+        parameters = { 
                     'email': email,
                     'firstName': firstName,
                     'lastName': lastName,
                     'clearRestOfFields': clearRestOfFields,
-                    'field': field,
-                    'customFields': customFields})
+                    'customFields': customFields}
+        ApiClient.AddDictionaryParameter(field, "field", parameters)
+
+        return ApiClient.Request('GET', '/contact/update', parameters)
 
     def Upload(contactFile, allowUnsubscribe = False, listID = None, listName = None, status = ApiTypes.ContactStatus.Active, consentDate = None, consentIP = None, consentTracking = ApiTypes.ConsentTracking.Unknown):
         """
@@ -5374,14 +5466,17 @@ class Contact:
         attachments = []
         for name in contactFile:
             attachments.append(('attachments', open(name, 'rb')))
-        return ApiClient.Request('POST', '/contact/upload', {
+
+        parameters = { 
                     'allowUnsubscribe': allowUnsubscribe,
                     'listID': listID,
                     'listName': listName,
                     'status': status.value,
                     'consentDate': consentDate,
                     'consentIP': consentIP,
-                    'consentTracking': consentTracking.value}, attachments)
+                    'consentTracking': consentTracking.value}
+
+        return ApiClient.Request('POST', '/contact/upload', parameters, attachments)
 
 
 """ 
@@ -5396,9 +5491,11 @@ class Domain:
             string domain - Name of selected domain.
             ApiTypes.TrackingType trackingType -  (default ApiTypes.TrackingType.Http)
         """
-        return ApiClient.Request('GET', '/domain/add', {
+        parameters = { 
                     'domain': domain,
-                    'trackingType': trackingType.value})
+                    'trackingType': trackingType.value}
+
+        return ApiClient.Request('GET', '/domain/add', parameters)
 
     def Delete(domain):
         """
@@ -5406,8 +5503,10 @@ class Domain:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             string domain - Name of selected domain.
         """
-        return ApiClient.Request('GET', '/domain/delete', {
-                    'domain': domain})
+        parameters = { 
+                    'domain': domain}
+
+        return ApiClient.Request('GET', '/domain/delete', parameters)
 
     def List():
         """
@@ -5415,7 +5514,8 @@ class Domain:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         Returns List<ApiTypes.DomainDetail>
         """
-        return ApiClient.Request('GET', '/domain/list')
+
+        return ApiClient.Request('GET', '/domain/list', parameters)
 
     def SetDefault(domain):
         """
@@ -5423,8 +5523,10 @@ class Domain:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             string domain - Default email sender, example: mail@yourdomain.com
         """
-        return ApiClient.Request('GET', '/domain/setdefault', {
-                    'domain': domain})
+        parameters = { 
+                    'domain': domain}
+
+        return ApiClient.Request('GET', '/domain/setdefault', parameters)
 
     def VerifyDkim(domain):
         """
@@ -5433,8 +5535,10 @@ class Domain:
             string domain - Name of selected domain.
         Returns string
         """
-        return ApiClient.Request('GET', '/domain/verifydkim', {
-                    'domain': domain})
+        parameters = { 
+                    'domain': domain}
+
+        return ApiClient.Request('GET', '/domain/verifydkim', parameters)
 
     def VerifyMX(domain):
         """
@@ -5443,8 +5547,10 @@ class Domain:
             string domain - Name of selected domain.
         Returns string
         """
-        return ApiClient.Request('GET', '/domain/verifymx', {
-                    'domain': domain})
+        parameters = { 
+                    'domain': domain}
+
+        return ApiClient.Request('GET', '/domain/verifymx', parameters)
 
     def VerifySpf(domain):
         """
@@ -5453,8 +5559,10 @@ class Domain:
             string domain - Name of selected domain.
         Returns string
         """
-        return ApiClient.Request('GET', '/domain/verifyspf', {
-                    'domain': domain})
+        parameters = { 
+                    'domain': domain}
+
+        return ApiClient.Request('GET', '/domain/verifyspf', parameters)
 
     def VerifyTracking(domain, trackingType = ApiTypes.TrackingType.Http):
         """
@@ -5464,9 +5572,11 @@ class Domain:
             ApiTypes.TrackingType trackingType -  (default ApiTypes.TrackingType.Http)
         Returns string
         """
-        return ApiClient.Request('GET', '/domain/verifytracking', {
+        parameters = { 
                     'domain': domain,
-                    'trackingType': trackingType.value})
+                    'trackingType': trackingType.value}
+
+        return ApiClient.Request('GET', '/domain/verifytracking', parameters)
 
 
 """ 
@@ -5491,7 +5601,7 @@ class Email:
             bool showMessageIDs - Include all MessageIDs for this transaction (default False)
         Returns ApiTypes.EmailJobStatus
         """
-        return ApiClient.Request('GET', '/email/getstatus', {
+        parameters = { 
                     'transactionID': transactionID,
                     'showFailed': showFailed,
                     'showSent': showSent,
@@ -5502,7 +5612,9 @@ class Email:
                     'showAbuse': showAbuse,
                     'showUnsubscribed': showUnsubscribed,
                     'showErrors': showErrors,
-                    'showMessageIDs': showMessageIDs})
+                    'showMessageIDs': showMessageIDs}
+
+        return ApiClient.Request('GET', '/email/getstatus', parameters)
 
     def Send(subject = None, EEfrom = None, fromName = None, sender = None, senderName = None, msgFrom = None, msgFromName = None, replyTo = None, replyToName = None, to = {}, msgTo = {}, msgCC = {}, msgBcc = {}, lists = {}, segments = {}, mergeSourceFilename = None, dataSource = None, channel = None, bodyHtml = None, bodyText = None, charset = None, charsetBodyHtml = None, charsetBodyText = None, encodingType = ApiTypes.EncodingType.EENone, template = None, attachmentFiles = {}, headers = {}, postBack = None, merge = {}, timeOffSetMinutes = None, poolName = None, isTransactional = False, attachments = {}, trackOpens = None, trackClicks = None):
         """
@@ -5548,7 +5660,8 @@ class Email:
         attachments = []
         for name in attachmentFiles:
             attachments.append(('attachments', open(name, 'rb')))
-        return ApiClient.Request('POST', '/email/send', {
+
+        parameters = { 
                     'subject': subject,
                     'from': EEfrom,
                     'fromName': fromName,
@@ -5574,15 +5687,17 @@ class Email:
                     'charsetBodyText': charsetBodyText,
                     'encodingType': encodingType.value,
                     'template': template,
-                    'headers': headers,
                     'postBack': postBack,
-                    'merge': merge,
                     'timeOffSetMinutes': timeOffSetMinutes,
                     'poolName': poolName,
                     'isTransactional': isTransactional,
                     'attachments': ";".join(map(str, attachments)),
                     'trackOpens': trackOpens,
-                    'trackClicks': trackClicks}, attachments)
+                    'trackClicks': trackClicks}
+        ApiClient.AddDictionaryParameter(headers, "headers", parameters)
+        ApiClient.AddDictionaryParameter(merge, "merge", parameters)
+
+        return ApiClient.Request('POST', '/email/send', parameters, attachments)
 
     def Status(messageID):
         """
@@ -5591,8 +5706,10 @@ class Email:
             string messageID - Unique identifier for this email.
         Returns ApiTypes.EmailStatus
         """
-        return ApiClient.Request('GET', '/email/status', {
-                    'messageID': messageID})
+        parameters = { 
+                    'messageID': messageID}
+
+        return ApiClient.Request('GET', '/email/status', parameters)
 
     def View(messageID):
         """
@@ -5600,8 +5717,10 @@ class Email:
             string messageID - Message identifier
         Returns ApiTypes.EmailView
         """
-        return ApiClient.Request('GET', '/email/view', {
-                    'messageID': messageID})
+        parameters = { 
+                    'messageID': messageID}
+
+        return ApiClient.Request('GET', '/email/view', parameters)
 
 
 """ 
@@ -5613,11 +5732,13 @@ class Export:
         """
         Check the current status of the export.
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            Guid publicExportID -
+            Guid publicExportID - 
         Returns ApiTypes.ExportStatus
         """
-        return ApiClient.Request('GET', '/export/checkstatus', {
-                    'publicExportID': publicExportID})
+        parameters = { 
+                    'publicExportID': publicExportID}
+
+        return ApiClient.Request('GET', '/export/checkstatus', parameters)
 
     def CountByType():
         """
@@ -5625,16 +5746,19 @@ class Export:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         Returns ApiTypes.ExportTypeCounts
         """
-        return ApiClient.Request('GET', '/export/countbytype')
+
+        return ApiClient.Request('GET', '/export/countbytype', parameters)
 
     def Delete(publicExportID):
         """
         Delete the specified export.
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            Guid publicExportID -
+            Guid publicExportID - 
         """
-        return ApiClient.Request('GET', '/export/delete', {
-                    'publicExportID': publicExportID})
+        parameters = { 
+                    'publicExportID': publicExportID}
+
+        return ApiClient.Request('GET', '/export/delete', parameters)
 
     def List(limit = 0, offset = 0):
         """
@@ -5644,9 +5768,11 @@ class Export:
             int offset - How many items should be loaded ahead. (default 0)
         Returns List<ApiTypes.Export>
         """
-        return ApiClient.Request('GET', '/export/list', {
+        parameters = { 
                     'limit': limit,
-                    'offset': offset})
+                    'offset': offset}
+
+        return ApiClient.Request('GET', '/export/list', parameters)
 
 
 """ 
@@ -5661,9 +5787,11 @@ class File:
             int? fileID -  (default None)
             string filename - Name of your file. (default None)
         """
-        return ApiClient.Request('GET', '/file/delete', {
+        parameters = { 
                     'fileID': fileID,
-                    'filename': filename})
+                    'filename': filename}
+
+        return ApiClient.Request('GET', '/file/delete', parameters)
 
     def Download(filename = None, fileID = None):
         """
@@ -5673,9 +5801,11 @@ class File:
             int? fileID -  (default None)
         Returns File
         """
-        return ApiClient.Request('GET', '/file/download', {
+        parameters = { 
                     'filename': filename,
-                    'fileID': fileID})
+                    'fileID': fileID}
+
+        return ApiClient.Request('GET', '/file/download', parameters)
 
     def List(msgID):
         """
@@ -5684,8 +5814,10 @@ class File:
             string msgID - ID number of selected message.
         Returns List<ApiTypes.File>
         """
-        return ApiClient.Request('GET', '/file/list', {
-                    'msgID': msgID})
+        parameters = { 
+                    'msgID': msgID}
+
+        return ApiClient.Request('GET', '/file/list', parameters)
 
     def ListAll():
         """
@@ -5693,7 +5825,8 @@ class File:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         Returns List<ApiTypes.File>
         """
-        return ApiClient.Request('GET', '/file/listall')
+
+        return ApiClient.Request('GET', '/file/listall', parameters)
 
     def Load(filename):
         """
@@ -5702,14 +5835,16 @@ class File:
             string filename - Name of your file.
         Returns ApiTypes.File
         """
-        return ApiClient.Request('GET', '/file/load', {
-                    'filename': filename})
+        parameters = { 
+                    'filename': filename}
+
+        return ApiClient.Request('GET', '/file/load', parameters)
 
     def Upload(file, name = None, expiresAfterDays = 35):
         """
         Uploads selected file to the server using http form upload format (MIME multipart/form-data) or PUT method.
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            File file -
+            File file - 
             string name - Filename (default None)
             int? expiresAfterDays - After how many days should the file be deleted. (default 35)
         Returns ApiTypes.File
@@ -5717,9 +5852,12 @@ class File:
         attachments = []
         for name in file:
             attachments.append(('attachments', open(name, 'rb')))
-        return ApiClient.Request('POST', '/file/upload', {
+
+        parameters = { 
                     'name': name,
-                    'expiresAfterDays': expiresAfterDays}, attachments)
+                    'expiresAfterDays': expiresAfterDays}
+
+        return ApiClient.Request('POST', '/file/upload', parameters, attachments)
 
 
 """ 
@@ -5739,13 +5877,15 @@ class List:
             bool allContacts - True: Include every Contact in your Account. Otherwise, false (default False)
         Returns int
         """
-        return ApiClient.Request('GET', '/list/add', {
+        parameters = { 
                     'listName': listName,
                     'createEmptyList': createEmptyList,
                     'allowUnsubscribe': allowUnsubscribe,
                     'rule': rule,
                     'emails': ";".join(map(str, emails)),
-                    'allContacts': allContacts})
+                    'allContacts': allContacts}
+
+        return ApiClient.Request('GET', '/list/add', parameters)
 
     def AddContacts(listName, rule = None, emails = {}, allContacts = False):
         """
@@ -5756,11 +5896,13 @@ class List:
             IEnumerable<string> emails - Comma delimited list of contact emails (default None)
             bool allContacts - True: Include every Contact in your Account. Otherwise, false (default False)
         """
-        return ApiClient.Request('GET', '/list/addcontacts', {
+        parameters = { 
                     'listName': listName,
                     'rule': rule,
                     'emails': ";".join(map(str, emails)),
-                    'allContacts': allContacts})
+                    'allContacts': allContacts}
+
+        return ApiClient.Request('GET', '/list/addcontacts', parameters)
 
     def Copy(sourceListName, newlistName = None, createEmptyList = None, allowUnsubscribe = None, rule = None):
         """
@@ -5773,12 +5915,14 @@ class List:
             string rule - Query used for filtering. (default None)
         Returns int
         """
-        return ApiClient.Request('GET', '/list/copy', {
+        parameters = { 
                     'sourceListName': sourceListName,
                     'newlistName': newlistName,
                     'createEmptyList': createEmptyList,
                     'allowUnsubscribe': allowUnsubscribe,
-                    'rule': rule})
+                    'rule': rule}
+
+        return ApiClient.Request('GET', '/list/copy', parameters)
 
     def CreateFromCampaign(campaignID, listName, statuses = {}):
         """
@@ -5789,10 +5933,12 @@ class List:
             IEnumerable<ApiTypes.LogJobStatus> statuses - Statuses of a campaign's emails you want to include in the new list (but NOT the contacts' statuses) (default None)
         Returns int
         """
-        return ApiClient.Request('GET', '/list/createfromcampaign', {
+        parameters = { 
                     'campaignID': campaignID,
                     'listName': listName,
-                    'statuses': ";".join(map(str, statuses))})
+                    'statuses': ";".join(map(str, statuses))}
+
+        return ApiClient.Request('GET', '/list/createfromcampaign', parameters)
 
     def CreateNthSelectionLists(listName, numberOfLists, excludeBlocked = True, allowUnsubscribe = False, rule = None, allContacts = False):
         """
@@ -5805,13 +5951,15 @@ class List:
             string rule - Query used for filtering. (default None)
             bool allContacts - True: Include every Contact in your Account. Otherwise, false (default False)
         """
-        return ApiClient.Request('GET', '/list/createnthselectionlists', {
+        parameters = { 
                     'listName': listName,
                     'numberOfLists': numberOfLists,
                     'excludeBlocked': excludeBlocked,
                     'allowUnsubscribe': allowUnsubscribe,
                     'rule': rule,
-                    'allContacts': allContacts})
+                    'allContacts': allContacts}
+
+        return ApiClient.Request('GET', '/list/createnthselectionlists', parameters)
 
     def CreateRandomList(listName, count, excludeBlocked = True, allowUnsubscribe = False, rule = None, allContacts = False):
         """
@@ -5825,13 +5973,15 @@ class List:
             bool allContacts - True: Include every Contact in your Account. Otherwise, false (default False)
         Returns int
         """
-        return ApiClient.Request('GET', '/list/createrandomlist', {
+        parameters = { 
                     'listName': listName,
                     'count': count,
                     'excludeBlocked': excludeBlocked,
                     'allowUnsubscribe': allowUnsubscribe,
                     'rule': rule,
-                    'allContacts': allContacts})
+                    'allContacts': allContacts}
+
+        return ApiClient.Request('GET', '/list/createrandomlist', parameters)
 
     def Delete(listName):
         """
@@ -5839,8 +5989,10 @@ class List:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             string listName - Name of your list.
         """
-        return ApiClient.Request('GET', '/list/delete', {
-                    'listName': listName})
+        parameters = { 
+                    'listName': listName}
+
+        return ApiClient.Request('GET', '/list/delete', parameters)
 
     def Export(listName, fileFormat = ApiTypes.ExportFileFormats.Csv, compressionFormat = ApiTypes.CompressionFormat.EENone, fileName = None):
         """
@@ -5852,11 +6004,13 @@ class List:
             string fileName - Name of your file. (default None)
         Returns ApiTypes.ExportLink
         """
-        return ApiClient.Request('GET', '/list/export', {
+        parameters = { 
                     'listName': listName,
                     'fileFormat': fileFormat.value,
                     'compressionFormat': compressionFormat.value,
-                    'fileName': fileName})
+                    'fileName': fileName}
+
+        return ApiClient.Request('GET', '/list/export', parameters)
 
     def list(EEfrom = None, to = None):
         """
@@ -5866,9 +6020,11 @@ class List:
             DateTime? to - Ending date for search in YYYY-MM-DDThh:mm:ss format. (default None)
         Returns List<ApiTypes.List>
         """
-        return ApiClient.Request('GET', '/list/list', {
+        parameters = { 
                     'from': EEfrom,
-                    'to': to})
+                    'to': to}
+
+        return ApiClient.Request('GET', '/list/list', parameters)
 
     def Load(listName):
         """
@@ -5877,8 +6033,10 @@ class List:
             string listName - Name of your list.
         Returns ApiTypes.List
         """
-        return ApiClient.Request('GET', '/list/load', {
-                    'listName': listName})
+        parameters = { 
+                    'listName': listName}
+
+        return ApiClient.Request('GET', '/list/load', parameters)
 
     def MoveContacts(oldListName, newListName, emails = {}, moveAll = None, statuses = {}, rule = None):
         """
@@ -5891,13 +6049,15 @@ class List:
             IEnumerable<ApiTypes.ContactStatus> statuses - List of contact statuses which are eligible to move. This ignores the 'moveAll' parameter (default None)
             string rule - Query used for filtering. (default None)
         """
-        return ApiClient.Request('GET', '/list/movecontacts', {
+        parameters = { 
                     'oldListName': oldListName,
                     'newListName': newListName,
                     'emails': ";".join(map(str, emails)),
                     'moveAll': moveAll,
                     'statuses': ";".join(map(str, statuses)),
-                    'rule': rule})
+                    'rule': rule}
+
+        return ApiClient.Request('GET', '/list/movecontacts', parameters)
 
     def RemoveContacts(listName, rule = None, emails = {}):
         """
@@ -5907,10 +6067,12 @@ class List:
             string rule - Query used for filtering. (default None)
             IEnumerable<string> emails - Comma delimited list of contact emails (default None)
         """
-        return ApiClient.Request('GET', '/list/removecontacts', {
+        parameters = { 
                     'listName': listName,
                     'rule': rule,
-                    'emails': ";".join(map(str, emails))})
+                    'emails': ";".join(map(str, emails))}
+
+        return ApiClient.Request('GET', '/list/removecontacts', parameters)
 
     def Update(listName, newListName = None, allowUnsubscribe = False):
         """
@@ -5920,10 +6082,12 @@ class List:
             string newListName - Name of your list if you want to change it. (default None)
             bool allowUnsubscribe - True: Allow unsubscribing from this list. Otherwise, false (default False)
         """
-        return ApiClient.Request('GET', '/list/update', {
+        parameters = { 
                     'listName': listName,
                     'newListName': newListName,
-                    'allowUnsubscribe': allowUnsubscribe})
+                    'allowUnsubscribe': allowUnsubscribe}
+
+        return ApiClient.Request('GET', '/list/update', parameters)
 
 
 """ 
@@ -5938,9 +6102,11 @@ class Log:
             string channelName - Name of selected channel. (default None)
             string transactionID - ID number of transaction (default None)
         """
-        return ApiClient.Request('GET', '/log/cancelinprogress', {
+        parameters = { 
                     'channelName': channelName,
-                    'transactionID': transactionID})
+                    'transactionID': transactionID}
+
+        return ApiClient.Request('GET', '/log/cancelinprogress', parameters)
 
     def Export(statuses, fileFormat = ApiTypes.ExportFileFormats.Csv, EEfrom = None, to = None, channelName = None, includeEmail = True, includeSms = True, messageCategory = {}, compressionFormat = ApiTypes.CompressionFormat.EENone, fileName = None, email = None):
         """
@@ -5959,7 +6125,7 @@ class Log:
             string email - Proper email address. (default None)
         Returns ApiTypes.ExportLink
         """
-        return ApiClient.Request('GET', '/log/export', {
+        parameters = { 
                     'statuses': ";".join(map(str, statuses)),
                     'fileFormat': fileFormat.value,
                     'from': EEfrom,
@@ -5970,7 +6136,9 @@ class Log:
                     'messageCategory': ";".join(map(str, messageCategory)),
                     'compressionFormat': compressionFormat.value,
                     'fileName': fileName,
-                    'email': email})
+                    'email': email}
+
+        return ApiClient.Request('GET', '/log/export', parameters)
 
     def ExportLinkTracking(EEfrom, to, channelName = None, fileFormat = ApiTypes.ExportFileFormats.Csv, limit = 0, offset = 0, compressionFormat = ApiTypes.CompressionFormat.EENone, fileName = None):
         """
@@ -5986,7 +6154,7 @@ class Log:
             string fileName - Name of your file. (default None)
         Returns ApiTypes.ExportLink
         """
-        return ApiClient.Request('GET', '/log/exportlinktracking', {
+        parameters = { 
                     'from': EEfrom,
                     'to': to,
                     'channelName': channelName,
@@ -5994,7 +6162,9 @@ class Log:
                     'limit': limit,
                     'offset': offset,
                     'compressionFormat': compressionFormat.value,
-                    'fileName': fileName})
+                    'fileName': fileName}
+
+        return ApiClient.Request('GET', '/log/exportlinktracking', parameters)
 
     def LinkTracking(EEfrom = None, to = None, limit = 0, offset = 0, channelName = None):
         """
@@ -6007,12 +6177,14 @@ class Log:
             string channelName - Name of selected channel. (default None)
         Returns ApiTypes.LinkTrackingDetails
         """
-        return ApiClient.Request('GET', '/log/linktracking', {
+        parameters = { 
                     'from': EEfrom,
                     'to': to,
                     'limit': limit,
                     'offset': offset,
-                    'channelName': channelName})
+                    'channelName': channelName}
+
+        return ApiClient.Request('GET', '/log/linktracking', parameters)
 
     def Load(statuses, EEfrom = None, to = None, channelName = None, limit = 0, offset = 0, includeEmail = True, includeSms = True, messageCategory = {}, email = None, useStatusChangeDate = False):
         """
@@ -6031,7 +6203,7 @@ class Log:
             bool useStatusChangeDate - True, if 'from' and 'to' parameters should resolve to the Status Change date. To resolve to the creation date - false (default False)
         Returns ApiTypes.Log
         """
-        return ApiClient.Request('GET', '/log/load', {
+        parameters = { 
                     'statuses': ";".join(map(str, statuses)),
                     'from': EEfrom,
                     'to': to,
@@ -6042,7 +6214,9 @@ class Log:
                     'includeSms': includeSms,
                     'messageCategory': ";".join(map(str, messageCategory)),
                     'email': email,
-                    'useStatusChangeDate': useStatusChangeDate})
+                    'useStatusChangeDate': useStatusChangeDate}
+
+        return ApiClient.Request('GET', '/log/load', parameters)
 
     def LoadNotifications(statuses, EEfrom = None, to = None, limit = 0, offset = 0, messageCategory = {}, useStatusChangeDate = False, notificationType = ApiTypes.NotificationType.All):
         """
@@ -6058,7 +6232,7 @@ class Log:
             ApiTypes.NotificationType notificationType -  (default ApiTypes.NotificationType.All)
         Returns ApiTypes.Log
         """
-        return ApiClient.Request('GET', '/log/loadnotifications', {
+        parameters = { 
                     'statuses': ";".join(map(str, statuses)),
                     'from': EEfrom,
                     'to': to,
@@ -6066,7 +6240,9 @@ class Log:
                     'offset': offset,
                     'messageCategory': ";".join(map(str, messageCategory)),
                     'useStatusChangeDate': useStatusChangeDate,
-                    'notificationType': notificationType.value})
+                    'notificationType': notificationType.value}
+
+        return ApiClient.Request('GET', '/log/loadnotifications', parameters)
 
     def RetryNow(msgID):
         """
@@ -6074,8 +6250,10 @@ class Log:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             string msgID - ID number of selected message.
         """
-        return ApiClient.Request('GET', '/log/retrynow', {
-                    'msgID': msgID})
+        parameters = { 
+                    'msgID': msgID}
+
+        return ApiClient.Request('GET', '/log/retrynow', parameters)
 
     def Summary(EEfrom, to, channelName = None, interval = ApiTypes.IntervalType.Summary, transactionID = None):
         """
@@ -6088,12 +6266,14 @@ class Log:
             string transactionID - ID number of transaction (default None)
         Returns ApiTypes.LogSummary
         """
-        return ApiClient.Request('GET', '/log/summary', {
+        parameters = { 
                     'from': EEfrom,
                     'to': to,
                     'channelName': channelName,
                     'interval': interval.value,
-                    'transactionID': transactionID})
+                    'transactionID': transactionID}
+
+        return ApiClient.Request('GET', '/log/summary', parameters)
 
 
 """ 
@@ -6109,9 +6289,11 @@ class Segment:
             string rule - Query used for filtering.
         Returns ApiTypes.Segment
         """
-        return ApiClient.Request('GET', '/segment/add', {
+        parameters = { 
                     'segmentName': segmentName,
-                    'rule': rule})
+                    'rule': rule}
+
+        return ApiClient.Request('GET', '/segment/add', parameters)
 
     def Copy(sourceSegmentName, newSegmentName = None, rule = None):
         """
@@ -6122,10 +6304,12 @@ class Segment:
             string rule - Query used for filtering. (default None)
         Returns ApiTypes.Segment
         """
-        return ApiClient.Request('GET', '/segment/copy', {
+        parameters = { 
                     'sourceSegmentName': sourceSegmentName,
                     'newSegmentName': newSegmentName,
-                    'rule': rule})
+                    'rule': rule}
+
+        return ApiClient.Request('GET', '/segment/copy', parameters)
 
     def Delete(segmentName):
         """
@@ -6133,8 +6317,10 @@ class Segment:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             string segmentName - Name of your segment.
         """
-        return ApiClient.Request('GET', '/segment/delete', {
-                    'segmentName': segmentName})
+        parameters = { 
+                    'segmentName': segmentName}
+
+        return ApiClient.Request('GET', '/segment/delete', parameters)
 
     def Export(segmentName, fileFormat = ApiTypes.ExportFileFormats.Csv, compressionFormat = ApiTypes.CompressionFormat.EENone, fileName = None):
         """
@@ -6146,11 +6332,13 @@ class Segment:
             string fileName - Name of your file. (default None)
         Returns ApiTypes.ExportLink
         """
-        return ApiClient.Request('GET', '/segment/export', {
+        parameters = { 
                     'segmentName': segmentName,
                     'fileFormat': fileFormat.value,
                     'compressionFormat': compressionFormat.value,
-                    'fileName': fileName})
+                    'fileName': fileName}
+
+        return ApiClient.Request('GET', '/segment/export', parameters)
 
     def List(includeHistory = False, EEfrom = None, to = None):
         """
@@ -6161,10 +6349,12 @@ class Segment:
             DateTime? to - To what date should the segment history be shown. In YYYY-MM-DDThh:mm:ss format. (default None)
         Returns List<ApiTypes.Segment>
         """
-        return ApiClient.Request('GET', '/segment/list', {
+        parameters = { 
                     'includeHistory': includeHistory,
                     'from': EEfrom,
-                    'to': to})
+                    'to': to}
+
+        return ApiClient.Request('GET', '/segment/list', parameters)
 
     def LoadByName(segmentNames, includeHistory = False, EEfrom = None, to = None):
         """
@@ -6176,11 +6366,13 @@ class Segment:
             DateTime? to - To what date should the segment history be shown. In YYYY-MM-DDThh:mm:ss format. (default None)
         Returns List<ApiTypes.Segment>
         """
-        return ApiClient.Request('GET', '/segment/loadbyname', {
+        parameters = { 
                     'segmentNames': ";".join(map(str, segmentNames)),
                     'includeHistory': includeHistory,
                     'from': EEfrom,
-                    'to': to})
+                    'to': to}
+
+        return ApiClient.Request('GET', '/segment/loadbyname', parameters)
 
     def Update(segmentName, newSegmentName = None, rule = None):
         """
@@ -6191,10 +6383,12 @@ class Segment:
             string rule - Query used for filtering. (default None)
         Returns ApiTypes.Segment
         """
-        return ApiClient.Request('GET', '/segment/update', {
+        parameters = { 
                     'segmentName': segmentName,
                     'newSegmentName': newSegmentName,
-                    'rule': rule})
+                    'rule': rule}
+
+        return ApiClient.Request('GET', '/segment/update', parameters)
 
 
 """ 
@@ -6209,9 +6403,11 @@ class SMS:
             string to - Mobile number you want to message. Can be any valid mobile number in E.164 format. To provide the country code you need to provide "+" before the number.  If your URL is not encoded then you need to replace the "+" with "%2B" instead.
             string body - Body of your message. The maximum body length is 160 characters.  If the message body is greater than 160 characters it is split into multiple messages and you are charged per message for the number of message required to send your length
         """
-        return ApiClient.Request('GET', '/sms/send', {
+        parameters = { 
                     'to': to,
-                    'body': body})
+                    'body': body}
+
+        return ApiClient.Request('GET', '/sms/send', parameters)
 
 
 """ 
@@ -6226,8 +6422,10 @@ class Survey:
             ApiTypes.Survey survey - Json representation of a survey
         Returns ApiTypes.Survey
         """
-        return ApiClient.Request('GET', '/survey/add', {
-                    'survey': survey})
+        parameters = { 
+                    'survey': survey}
+
+        return ApiClient.Request('GET', '/survey/add', parameters)
 
     def Delete(publicSurveyID):
         """
@@ -6235,8 +6433,10 @@ class Survey:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             Guid publicSurveyID - Survey identifier
         """
-        return ApiClient.Request('GET', '/survey/delete', {
-                    'publicSurveyID': publicSurveyID})
+        parameters = { 
+                    'publicSurveyID': publicSurveyID}
+
+        return ApiClient.Request('GET', '/survey/delete', parameters)
 
     def Export(publicSurveyID, fileName, fileFormat = ApiTypes.ExportFileFormats.Csv, compressionFormat = ApiTypes.CompressionFormat.EENone):
         """
@@ -6248,11 +6448,13 @@ class Survey:
             ApiTypes.CompressionFormat compressionFormat - FileResponse compression format. None or Zip. (default ApiTypes.CompressionFormat.EENone)
         Returns ApiTypes.ExportLink
         """
-        return ApiClient.Request('GET', '/survey/export', {
+        parameters = { 
                     'publicSurveyID': publicSurveyID,
                     'fileName': fileName,
                     'fileFormat': fileFormat.value,
-                    'compressionFormat': compressionFormat.value})
+                    'compressionFormat': compressionFormat.value}
+
+        return ApiClient.Request('GET', '/survey/export', parameters)
 
     def List():
         """
@@ -6260,7 +6462,8 @@ class Survey:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
         Returns List<ApiTypes.Survey>
         """
-        return ApiClient.Request('GET', '/survey/list')
+
+        return ApiClient.Request('GET', '/survey/list', parameters)
 
     def LoadResponseList(publicSurveyID):
         """
@@ -6269,8 +6472,10 @@ class Survey:
             Guid publicSurveyID - Survey identifier
         Returns List<ApiTypes.SurveyResultInfo>
         """
-        return ApiClient.Request('GET', '/survey/loadresponselist', {
-                    'publicSurveyID': publicSurveyID})
+        parameters = { 
+                    'publicSurveyID': publicSurveyID}
+
+        return ApiClient.Request('GET', '/survey/loadresponselist', parameters)
 
     def LoadResults(publicSurveyID):
         """
@@ -6279,8 +6484,10 @@ class Survey:
             Guid publicSurveyID - Survey identifier
         Returns ApiTypes.SurveyResultsSummaryInfo
         """
-        return ApiClient.Request('GET', '/survey/loadresults', {
-                    'publicSurveyID': publicSurveyID})
+        parameters = { 
+                    'publicSurveyID': publicSurveyID}
+
+        return ApiClient.Request('GET', '/survey/loadresults', parameters)
 
     def Update(survey):
         """
@@ -6289,8 +6496,10 @@ class Survey:
             ApiTypes.Survey survey - Json representation of a survey
         Returns ApiTypes.Survey
         """
-        return ApiClient.Request('GET', '/survey/update', {
-                    'survey': survey})
+        parameters = { 
+                    'survey': survey}
+
+        return ApiClient.Request('GET', '/survey/update', parameters)
 
 
 """ 
@@ -6314,7 +6523,7 @@ class Template:
             int originalTemplateID - ID number of original template. (default 0)
         Returns int
         """
-        return ApiClient.Request('GET', '/template/add', {
+        parameters = { 
                     'name': name,
                     'subject': subject,
                     'fromEmail': fromEmail,
@@ -6324,7 +6533,9 @@ class Template:
                     'bodyHtml': bodyHtml,
                     'bodyText': bodyText,
                     'css': css,
-                    'originalTemplateID': originalTemplateID})
+                    'originalTemplateID': originalTemplateID}
+
+        return ApiClient.Request('GET', '/template/add', parameters)
 
     def CheckUsage(templateID):
         """
@@ -6333,8 +6544,10 @@ class Template:
             int templateID - ID number of template.
         Returns bool
         """
-        return ApiClient.Request('GET', '/template/checkusage', {
-                    'templateID': templateID})
+        parameters = { 
+                    'templateID': templateID}
+
+        return ApiClient.Request('GET', '/template/checkusage', parameters)
 
     def Copy(templateID, name, subject, fromEmail, fromName):
         """
@@ -6347,12 +6560,14 @@ class Template:
             string fromName - Default From: name.
         Returns ApiTypes.Template
         """
-        return ApiClient.Request('GET', '/template/copy', {
+        parameters = { 
                     'templateID': templateID,
                     'name': name,
                     'subject': subject,
                     'fromEmail': fromEmail,
-                    'fromName': fromName})
+                    'fromName': fromName}
+
+        return ApiClient.Request('GET', '/template/copy', parameters)
 
     def Delete(templateID):
         """
@@ -6360,8 +6575,10 @@ class Template:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             int templateID - ID number of template.
         """
-        return ApiClient.Request('GET', '/template/delete', {
-                    'templateID': templateID})
+        parameters = { 
+                    'templateID': templateID}
+
+        return ApiClient.Request('GET', '/template/delete', parameters)
 
     def GetEmbeddedHtml(templateID):
         """
@@ -6370,8 +6587,10 @@ class Template:
             int templateID - ID number of template.
         Returns string
         """
-        return ApiClient.Request('GET', '/template/getembeddedhtml', {
-                    'templateID': templateID})
+        parameters = { 
+                    'templateID': templateID}
+
+        return ApiClient.Request('GET', '/template/getembeddedhtml', parameters)
 
     def GetList(limit = 500, offset = 0):
         """
@@ -6381,9 +6600,11 @@ class Template:
             int offset - How many items should be loaded ahead. (default 0)
         Returns ApiTypes.TemplateList
         """
-        return ApiClient.Request('GET', '/template/getlist', {
+        parameters = { 
                     'limit': limit,
-                    'offset': offset})
+                    'offset': offset}
+
+        return ApiClient.Request('GET', '/template/getlist', parameters)
 
     def LoadTemplate(templateID, ispublic = False):
         """
@@ -6393,9 +6614,11 @@ class Template:
             bool ispublic -  (default False)
         Returns ApiTypes.Template
         """
-        return ApiClient.Request('GET', '/template/loadtemplate', {
+        parameters = { 
                     'templateID': templateID,
-                    'ispublic': ispublic})
+                    'ispublic': ispublic}
+
+        return ApiClient.Request('GET', '/template/loadtemplate', parameters)
 
     def RemoveScreenshot(templateID):
         """
@@ -6403,8 +6626,10 @@ class Template:
             string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
             int templateID - ID number of template.
         """
-        return ApiClient.Request('GET', '/template/removescreenshot', {
-                    'templateID': templateID})
+        parameters = { 
+                    'templateID': templateID}
+
+        return ApiClient.Request('GET', '/template/removescreenshot', parameters)
 
     def SaveScreenshot(base64Image, templateID):
         """
@@ -6414,9 +6639,11 @@ class Template:
             int templateID - ID number of template.
         Returns string
         """
-        return ApiClient.Request('GET', '/template/savescreenshot', {
+        parameters = { 
                     'base64Image': base64Image,
-                    'templateID': templateID})
+                    'templateID': templateID}
+
+        return ApiClient.Request('GET', '/template/savescreenshot', parameters)
 
     def Update(templateID, templateScope = ApiTypes.TemplateScope.Private, name = None, subject = None, fromEmail = None, fromName = None, bodyHtml = None, bodyText = None, css = None, removeScreenshot = True):
         """
@@ -6433,7 +6660,7 @@ class Template:
             string css - CSS style (default None)
             bool removeScreenshot -  (default True)
         """
-        return ApiClient.Request('GET', '/template/update', {
+        parameters = { 
                     'templateID': templateID,
                     'templateScope': templateScope.value,
                     'name': name,
@@ -6443,5 +6670,7 @@ class Template:
                     'bodyHtml': bodyHtml,
                     'bodyText': bodyText,
                     'css': css,
-                    'removeScreenshot': removeScreenshot})
+                    'removeScreenshot': removeScreenshot}
+
+        return ApiClient.Request('GET', '/template/update', parameters)
 
