@@ -4828,21 +4828,6 @@ class Account:
 
         return ApiClient.Request('GET', '/account/updatecustombranding', parameters)
 
-    def UpdateHttpNotification(url, notifyOncePerEmail = False, settings = None):
-        """
-        Update http notification URL.
-            string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-            string url - URL of notification.
-            bool notifyOncePerEmail - True, if you want to receive notifications for each type only once per email. Otherwise, false (default False)
-            string settings - Http notification settings serialized to JSON  (default None)
-        """
-        parameters = { 
-                    'url': url,
-                    'notifyOncePerEmail': notifyOncePerEmail,
-                    'settings': settings}
-
-        return ApiClient.Request('GET', '/account/updatehttpnotification', parameters)
-
     def UpdateProfile(firstName, lastName, address1, city, state, zip, countryID, marketingConsent = None, address2 = None, company = None, website = None, logoUrl = None, taxCode = None, phone = None):
         """
         Update your profile.
