@@ -664,7 +664,7 @@ class ApiTypes:
 		ReferralCount = None  # long
 
 		"""
-		Maximum number of contacts the Account can have
+		Maximum allowed Contacts limit if it's a Sub-Account.
 		"""
 		MaxContacts = None  # int
 
@@ -1634,6 +1634,11 @@ class ApiTypes:
 		Last change date
 		"""
 		DateUpdated = None  # DateTime
+
+		"""
+		Date of last status change.
+		"""
+		StatusChangeDate = None  # DateTime?
 
 		"""
 		Source of URL of payment
@@ -6586,17 +6591,19 @@ class List:
 		return ApiClient.Request('GET', '/list/add', parameters)
 
 	@staticmethod
-	def AddContacts(listName, rule=None, emails={}, allContacts=False):
+	def AddContacts(listName=None, listId=None, rule=None, emails={}, allContacts=False):
 		"""
 		Add existing Contacts to chosen list
 			string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-			string listName - Name of your list.
+			string listName - Name of your list. (default None)
+			int? listId - ID number of selected list. (default None)
 			string rule - Query used for filtering. (default None)
 			IEnumerable<string> emails - Comma delimited list of contact emails (default None)
 			bool allContacts - True: Include every Contact in your Account. Otherwise, false (default False)
 		"""
 		parameters = { 
 			'listName': listName,
+			'listId': listId,
 			'rule': rule,
 			'emails': ";".join(map(str, emails)),
 			'allContacts': allContacts}
@@ -6604,38 +6611,42 @@ class List:
 		return ApiClient.Request('GET', '/list/addcontacts', parameters)
 
 	@staticmethod
-	def Copy(sourceListName, newlistName=None, createEmptyList=None, allowUnsubscribe=None, rule=None):
+	def Copy(newlistName=None, createEmptyList=None, allowUnsubscribe=None, rule=None, sourceListName=None, sourceListId=None):
 		"""
 		Copy your existing List with the option to provide new settings to it. Some fields, when left empty, default to the source list's settings
 			string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-			string sourceListName - The name of the list you want to copy
-			string newlistName - Name of your list if you want to change it. (default None)
+			string newlistName - The name of the list you want to copy (default None)
 			bool? createEmptyList - True to create an empty list, otherwise false. Ignores rule and emails parameters if provided. (default None)
 			bool? allowUnsubscribe - True: Allow unsubscribing from this list. Otherwise, false (default None)
 			string rule - Query used for filtering. (default None)
+			string sourceListName - (default None)
+			int? sourceListId - (default None)
 		Returns int
 		"""
 		parameters = { 
-			'sourceListName': sourceListName,
 			'newlistName': newlistName,
 			'createEmptyList': createEmptyList,
 			'allowUnsubscribe': allowUnsubscribe,
-			'rule': rule}
+			'rule': rule,
+			'sourceListName': sourceListName,
+			'sourceListId': sourceListId}
 
 		return ApiClient.Request('GET', '/list/copy', parameters)
 
 	@staticmethod
-	def CreateFromCampaign(campaignID, listName, statuses={}):
+	def CreateFromCampaign(campaignID, listName=None, listId=None, statuses={}):
 		"""
 		Create a new list from the recipients of the given campaign, using the given statuses of Messages
 			string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
 			int campaignID - ID of the campaign which recipients you want to copy
-			string listName - Name of your list.
+			string listName - Name of your list. (default None)
+			int? listId - ID number of selected list. (default None)
 			IEnumerable<ApiTypes.LogJobStatus> statuses - Statuses of a campaign's emails you want to include in the new list (but NOT the contacts' statuses) (default None)
 		"""
 		parameters = { 
 			'campaignID': campaignID,
 			'listName': listName,
+			'listId': listId,
 			'statuses': ";".join(map(str, statuses))}
 
 		return ApiClient.Request('GET', '/list/createfromcampaign', parameters)
@@ -6686,23 +6697,26 @@ class List:
 		return ApiClient.Request('GET', '/list/createrandomlist', parameters)
 
 	@staticmethod
-	def Delete(listName):
+	def Delete(listName=None, listId=None):
 		"""
 		Deletes List and removes all the Contacts from it (does not delete Contacts).
 			string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-			string listName - Name of your list.
+			string listName - Name of your list. (default None)
+			int? listId - ID number of selected list. (default None)
 		"""
 		parameters = { 
-			'listName': listName}
+			'listName': listName,
+			'listId': listId}
 
 		return ApiClient.Request('GET', '/list/delete', parameters)
 
 	@staticmethod
-	def Export(listName, fileFormat=ApiTypes.ExportFileFormats.Csv, compressionFormat=ApiTypes.CompressionFormat.EENone, fileName=None):
+	def Export(listName=None, listId=None, fileFormat=ApiTypes.ExportFileFormats.Csv, compressionFormat=ApiTypes.CompressionFormat.EENone, fileName=None):
 		"""
 		Exports all the contacts from the provided list
 			string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-			string listName - Name of your list.
+			string listName - Name of your list. (default None)
+			int? listId - ID number of selected list. (default None)
 			ApiTypes.ExportFileFormats fileFormat - Format of the exported file (default ApiTypes.ExportFileFormats.Csv)
 			ApiTypes.CompressionFormat compressionFormat - FileResponse compression format. None or Zip. (default ApiTypes.CompressionFormat.EENone)
 			string fileName - Name of your file including extension. (default None)
@@ -6710,6 +6724,7 @@ class List:
 		"""
 		parameters = { 
 			'listName': listName,
+			'listId': listId,
 			'fileFormat': fileFormat.value,
 			'compressionFormat': compressionFormat.value,
 			'fileName': fileName}
@@ -6732,15 +6747,17 @@ class List:
 		return ApiClient.Request('GET', '/list/list', parameters)
 
 	@staticmethod
-	def Load(listName):
+	def Load(listName=None, listId=None):
 		"""
 		Returns detailed information about specific list.
 			string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-			string listName - Name of your list.
+			string listName - Name of your list. (default None)
+			int? listId - ID number of selected list. (default None)
 		Returns ApiTypes.List
 		"""
 		parameters = { 
-			'listName': listName}
+			'listName': listName,
+			'listId': listId}
 
 		return ApiClient.Request('GET', '/list/load', parameters)
 
@@ -6767,33 +6784,37 @@ class List:
 		return ApiClient.Request('GET', '/list/movecontacts', parameters)
 
 	@staticmethod
-	def RemoveContacts(listName, rule=None, emails={}):
+	def RemoveContacts(listName=None, listId=None, rule=None, emails={}):
 		"""
 		Remove selected Contacts from your list
 			string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-			string listName - Name of your list.
+			string listName - Name of your list. (default None)
+			int? listId - ID number of selected list. (default None)
 			string rule - Query used for filtering. (default None)
 			IEnumerable<string> emails - Comma delimited list of contact emails (default None)
 		"""
 		parameters = { 
 			'listName': listName,
+			'listId': listId,
 			'rule': rule,
 			'emails': ";".join(map(str, emails))}
 
 		return ApiClient.Request('GET', '/list/removecontacts', parameters)
 
 	@staticmethod
-	def Update(listName, newListName=None, allowUnsubscribe=False, trackHistory=False):
+	def Update(listName=None, listId=None, newListName=None, allowUnsubscribe=False, trackHistory=False):
 		"""
 		Update existing list
 			string apikey - ApiKey that gives you access to our SMTP and HTTP API's.
-			string listName - Name of your list.
+			string listName - Name of your list. (default None)
+			int? listId - ID number of selected list. (default None)
 			string newListName - Name of your list if you want to change it. (default None)
 			bool allowUnsubscribe - True: Allow unsubscribing from this list. Otherwise, false (default False)
 			bool trackHistory - (default False)
 		"""
 		parameters = { 
 			'listName': listName,
+			'listId': listId,
 			'newListName': newListName,
 			'allowUnsubscribe': allowUnsubscribe,
 			'trackHistory': trackHistory}
