@@ -1,6 +1,6 @@
-**LEGACY**
-
-New version of API - https://github.com/ElasticEmail/elasticemail-python
+> [!WARNING]
+> **Deprecated.** This is the legacy Python client for the Elastic Email **Web API v2**. It is archived and no longer maintained.
+> Use the official [elasticemail-python](https://github.com/ElasticEmail/elasticemail-python) SDK for the [REST API v4](https://elasticemail.com/developers/api-documentation/rest-api) instead.
 
 **This library allows you to quickly and easily use the Elastic Email Web API v2 via Python.**
 
